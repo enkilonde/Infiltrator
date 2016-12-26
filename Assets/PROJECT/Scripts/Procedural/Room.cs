@@ -1,14 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
-
+//using System.Collections;
+using System;
+using System.Collections.Generic;
+using Lca = System.Collections.Generic.List<ElemLca>;
 
 public enum RoomType { NONE, EMPTY, TREASURE, BOSS, NORMAL };
 public enum SpriteType { NONE, GROUND, DOOR, ROCK };
 
+public struct ElemLca
+{
+    public float ymax;
+    public float xmin;
+    public float invm;
+};
+
 
 public class Room{
     private int nbDoor;
-    private int nbPointInProceduralArray;
+    private int nbPointInRoom;
+    private int nbPointPerDoor;
+    private int nbTrianglePerDoor;
     
     private RoomType roomType;
     private SpriteType [,] roomMatrix;
@@ -23,10 +34,12 @@ public class Room{
     public Room(ref Vector2 [] doors)
     {
         nbDoor = doors.Length;
-        nbPointInProceduralArray = 2*nbDoor + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+        nbPointPerDoor = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+        nbPointInRoom = nbDoor * nbPointPerDoor;
+        nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
         roomType = RoomType.EMPTY;
 
-        generationArray = new Vector2[nbDoor,nbPointInProceduralArray];
+        generationArray = new Vector2[nbDoor,nbPointInRoom];
         roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
         this.doors = new Vector2[doors.Length];
         this.doors = doors;
@@ -37,10 +50,12 @@ public class Room{
     public Room(ref Vector2 [] doors, RoomType roomType)
     {
         nbDoor = doors.Length;
-        nbPointInProceduralArray = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+        nbPointPerDoor = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+        nbPointInRoom = nbDoor * nbPointPerDoor;
+        nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
         this.roomType = roomType;
 
-        generationArray = new Vector2[nbDoor,nbPointInProceduralArray];
+        generationArray = new Vector2[nbDoor, nbPointInRoom];
         roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
         this.doors = new Vector2[doors.Length];
         this.doors = doors;
@@ -70,30 +85,20 @@ public class Room{
                 roomMatrix[i, j] = SpriteType.ROCK;
             }
         }
-        //read the coordinate list and convert it into SpriteType
-        for(int i = 0; i < nbDoor; i++)
-        {
-            for(int j = 0; j < nbPointInProceduralArray-2; j++)
-            {
-                int x = (int)(generationArray[i, j].x);
-                int y = (int)(generationArray[i, j].y);
-                if (x < ProceduralValues.roomWidth && x >= 0 && y < ProceduralValues.roomHeight && y >= 0)
-                {
-                    for (int k = 0; k < 1; k++)
-                    {
-                        if (y + k < 32)
-                            roomMatrix[x, y + k] = SpriteType.GROUND;
-                        if (y - k >= 0)
-                            roomMatrix[x, y - k] = SpriteType.GROUND;
-                        if (x + k < 32)
-                            roomMatrix[x + k, y] = SpriteType.GROUND;
-                        if (x - k >= 0)
-                            roomMatrix[x - k, y] = SpriteType.GROUND;
 
-                    }
-                }
+        //read the coordinate list and convert it into SpriteType
+        Vector2[][] listPoly = new Vector2[nbDoor*nbTrianglePerDoor][];
+        int temp = 0;
+        for (int i = 0; i < nbDoor; i++)
+        {
+            for (int j = 0; j < nbTrianglePerDoor; j++)
+            {
+                listPoly[temp] = new Vector2[3]{ generationArray[i, j], generationArray[i, j + 1], generationArray[i, j + 2] };
+                temp++;
             }
         }
+        polyToMatrix(listPoly);
+
         //place doors if they are inside the room and initilize the list for procedurale generation
         for (int i = 0; i < doors.Length; i++)
         {
@@ -172,7 +177,7 @@ public class Room{
     /// <returns></returns>
     public Vector2 createNewRandomizePoint(Vector2 a, Vector2 b)
     {
-        float rand = Random.Range(-ProceduralValues.roomRandomOffsetRange / 2, +ProceduralValues.roomRandomOffsetRange / 2);
+        float rand = UnityEngine.Random.Range(-ProceduralValues.roomRandomOffsetRange / 2, +ProceduralValues.roomRandomOffsetRange / 2);
         Vector2 result = new Vector2();
         Vector2 centerOfSegment = (a + b) / 2;
         Vector2 normalOfSegment = b - a;
@@ -203,6 +208,54 @@ public class Room{
             result.y = ProceduralValues.roomHeight - 1;
 
         return result;
+    }
+
+    /// <summary>
+    /// Convert a list of triangle into a matrix of sprite (bounding box methode)
+    /// </summary>
+    /// <param name="listPoly"></param>
+    public void polyToMatrix(Vector2[][] listPoly)
+    {
+        for(int i=0; i < listPoly.Length; i++)
+        {
+            int xMin = (int)listPoly[i][0].x, xMax = (int)listPoly[i][0].x, yMin = (int)listPoly[i][0].y, yMax = (int)listPoly[i][0].y;
+            for(int j = 1; j < listPoly[i].Length; j++)
+            {
+                if((int)listPoly[i][j].x < xMin)
+                {
+                    xMin = (int)listPoly[i][j].x;
+                }
+                if ((int)listPoly[i][j].x > xMax)
+                {
+                    xMax = (int)listPoly[i][j].x;
+                }
+                if ((int)listPoly[i][j].y < yMin)
+                {
+                    yMin = (int)listPoly[i][j].y;
+                }
+                if ((int)listPoly[i][j].y > yMax)
+                {
+                    yMax = (int)listPoly[i][j].y;
+                }
+            }
+            if (xMin < 0)
+                xMin = 0;
+            if (xMax >= ProceduralValues.roomWidth)
+                xMax = ProceduralValues.roomWidth - 1;
+            if (yMin < 0)
+                yMin = 0;
+            if (yMax >= ProceduralValues.roomHeight)
+                yMax = ProceduralValues.roomHeight - 1;
+
+            for (int x = xMin; x <= xMax; x++)
+            {
+                for(int y = yMin; y <= yMax; y++)
+                {
+                    roomMatrix[x,y] = SpriteType.GROUND;
+                }
+            }
+        }
+
     }
 
 }

@@ -15,20 +15,27 @@ public class RenderRoom : BaseObject {
 
         // duplicate the original texture and assign to the material
         Texture2D texture = new Texture2D(32, 32, TextureFormat.RGBA32, false, false);
-        for(int x = 0; x < 32; x++)
+        for(int x = 0; x < ProceduralValues.roomWidth; x++)
         {
-            for (int y = 0; y < 32; y++)
+            for (int y = 0; y < ProceduralValues.roomHeight; y++)
             {
                 switch (room.getRoomMatrix()[x, y])
                 {
                     case SpriteType.GROUND:
-                        texture.SetPixel(x, y, Color.white);
+
+                                texture.SetPixel(x, y, Color.white);
+
+                        
                         break;
                     case SpriteType.DOOR:
-                        texture.SetPixel(x, y, Color.cyan);
+
+                                texture.SetPixel(x, y, Color.cyan);
+
                         break;
                     case SpriteType.ROCK:
-                        texture.SetPixel(x, y, Color.blue);
+
+                                texture.SetPixel(x, y, Color.blue);
+
                         break;
                     default:
                         break;
