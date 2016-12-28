@@ -14,16 +14,16 @@ public struct ElemLca
     public float invm;
 };
 
-
+[Serializable]
 public class Room{
-    private int nbDoor;
-    private int nbPointInRoom;
-    private int nbPointPerDoor;
-    private int nbTrianglePerDoor;
-    
-    private RoomType roomType;
+    [SerializeField] private int nbDoor;
+    [SerializeField] private int nbPointInRoom;
+    [SerializeField] private int nbPointPerDoor;
+    [SerializeField] private int nbTrianglePerDoor;
+
+    [SerializeField] private RoomType roomType;
     private SpriteType [,] roomMatrix;
-    private Vector2 [] doors;
+    [SerializeField] private Vector2 [] doors;
     private Vector2 [,] generationArray;
 
     //constructors
