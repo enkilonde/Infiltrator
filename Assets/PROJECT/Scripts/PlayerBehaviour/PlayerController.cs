@@ -36,14 +36,19 @@ public class PlayerController : BaseObject
         direction.z = Input.GetAxisRaw("Vertical");
 
         playerRigidbody.velocity = direction.normalized * playerSpeed;
+
+        if(direction.magnitude != 0) transform.LookAt(transform.position + direction.normalized);
+
     }
 
     void PlayerLookAt()
     {
-        var mousePos2D = Input.mousePosition;
-        mousePos2D.z = Camera.main.transform.position.y;
-        mousePos2D = Camera.main.ScreenToWorldPoint(mousePos2D);
-        transform.LookAt(new Vector3(mousePos2D.x, transform.position.y, mousePos2D.z));
+        //var mousePos2D = Input.mousePosition;
+        //mousePos2D.z = Camera.main.transform.position.y;
+        //mousePos2D = Camera.main.ScreenToWorldPoint(mousePos2D);
+        //transform.LookAt(new Vector3(mousePos2D.x, transform.position.y, mousePos2D.z));
+
+
 
     }
 
