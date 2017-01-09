@@ -2,17 +2,9 @@
 //using System.Collections;
 using System;
 using System.Collections.Generic;
-using Lca = System.Collections.Generic.List<ElemLca>;
 
 public enum RoomType { NONE, EMPTY, TREASURE, BOSS, NORMAL };
 public enum SpriteType { NONE, GROUND, DOOR, ROCK };
-
-public struct ElemLca
-{
-    public float ymax;
-    public float xmin;
-    public float invm;
-};
 
 [Serializable]
 public class Room{
@@ -157,10 +149,13 @@ public class Room{
     public bool generateProceduralArrayRecursively(ref Vector2[] way, int start, int end)
     {
         bool test;
+        bool t1, t2;
         if(start%2 != 1 && end%2 != 1)
         {
             way[(start + end) / 2] = createNewRandomizePoint(way[start], way[end]);
-            test = (generateProceduralArrayRecursively(ref way, start, ((start + end) / 2)) && generateProceduralArrayRecursively(ref way, ((start + end) / 2), end));
+            t1 = generateProceduralArrayRecursively(ref way, start, ((start + end) / 2));
+            t2 = generateProceduralArrayRecursively(ref way, ((start + end) / 2), end);
+            test = t1 && t2;
         }
         else
         {
@@ -177,25 +172,18 @@ public class Room{
     /// <returns></returns>
     public Vector2 createNewRandomizePoint(Vector2 a, Vector2 b)
     {
-        float rand = UnityEngine.Random.Range(-ProceduralValues.roomRandomOffsetRange / 2, +ProceduralValues.roomRandomOffsetRange / 2);
+        float rand = UnityEngine.Random.Range(+ProceduralValues.roomMinRandomDistanceRange, +ProceduralValues.roomMaxRandomDistanceRange);
+        float randOneTwo = UnityEngine.Random.Range(0.0f, 1.0f);
+        if(randOneTwo <= 0.5f)
+        {
+            rand *= -1;
+        }
         Vector2 result = new Vector2();
         Vector2 centerOfSegment = (a + b) / 2;
         Vector2 normalOfSegment = b - a;
-        if(normalOfSegment.x != 0)
-        {
-            normalOfSegment.x *= -1;
-        }
-        else if(normalOfSegment.y != 0)
-        {
-            normalOfSegment.y *= 1;
-        }
-        else
-        {
-            //error, vector is null
-            result.x = 0;
-            result.y = 0;
-            return result;
-        }
+        float temp = normalOfSegment.x;
+        normalOfSegment.x = -normalOfSegment.y;
+        normalOfSegment.y = temp;
         normalOfSegment.Normalize();
         result = centerOfSegment + rand * normalOfSegment;
         if (result.x < 0)
