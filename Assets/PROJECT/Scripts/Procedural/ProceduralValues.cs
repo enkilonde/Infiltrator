@@ -11,11 +11,12 @@ public class ProceduralValues
     public const int roomWidth = 32;
     public const int roomHeight = 32;
     //number of iteraction in the procedural algorith
-    public const int roomNbIteration = 5;
+    public const int roomNbIteration = 6;
     //offset randomly apply to each point create by the room algorithm
-    public const float roomMaxRandomDistanceRange = 4;
-    public const float roomMinRandomDistanceRange = 2;
-
+    public const float roomMaxRandomDistanceRange = 6f;
+    public const float roomMinRandomDistanceRange = 2f;
+    //minimum area of rectangle for ennemis pattern
+    public const int ennemisMinArea = 20;
 
     //NEWVAR - Enki - +comment
     //End NEWVAR

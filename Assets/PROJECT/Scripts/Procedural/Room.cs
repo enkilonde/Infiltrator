@@ -15,6 +15,7 @@ public class Room{
 
     [SerializeField] private RoomType roomType;
     private SpriteType [,] roomMatrix;
+    private List<Rect> listRect = new List<Rect>();
     [SerializeField] private Vector2 [] doors;
     private Vector2 [,] generationArray;
 
@@ -38,6 +39,7 @@ public class Room{
 
         GenerateRoom();
         CreateRoom();
+        cutRoomInRect();
     }
     public Room(ref Vector2 [] doors, RoomType roomType)
     {
@@ -54,12 +56,17 @@ public class Room{
 
         GenerateRoom();
         CreateRoom();
+        cutRoomInRect();
     }
 
     //accessors
     public SpriteType [,] getRoomMatrix()
     {
         return roomMatrix;
+    }
+    public List<Rect> getListRect()
+    {
+        return listRect;
     }
 
     //methodes
@@ -243,7 +250,168 @@ public class Room{
                 }
             }
         }
-
     }
+
+    /// <summary>
+    /// cut the path of the room into usable rectangle
+    /// </summary>
+    public void cutRoomInRect()
+    {
+        int[,] matrix = new int[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
+        for (int x = 0; x < ProceduralValues.roomWidth; x++)
+        {
+            for (int y = 0; y < ProceduralValues.roomHeight; y++)
+            {
+                if (roomMatrix[x, y] == SpriteType.GROUND || roomMatrix[x, y] == SpriteType.DOOR)
+                {
+                    matrix[x, y] = 1;
+                }
+                else
+                {
+                    matrix[x, y] = 0;
+                }
+            }
+        }
+
+        int area = 0;
+        Rect temp = new Rect();
+        do
+        {
+            area = getBiggestRectInMatrix(matrix, ref temp);
+            listRect.Add(temp);
+            for (int x = 0; x < temp.width; x++)
+            {
+                for (int y = 0; y < temp.height; y++)
+                {
+                    //string str = "x : " + x + "  y : " + y + "  temp.x : " + temp.x + "  temp.y : " + temp.y + "  width : " + temp.width + "  height : " + temp.height;
+                    //Debug.Log(str);
+                    matrix[x + (int)temp.x, y + (int)temp.y] = 0;
+                }
+            }
+        } while (area >= ProceduralValues.ennemisMinArea);
+        /*
+        foreach(Rect rect in listRect)
+        {
+            Debug.Log(rect);
+        }*/
+    }
+
+    /// <summary>
+    /// get all histogram of current matrix
+    /// </summary>
+    /// <param name="matrix"></param>
+    /// <param name="rect"></param>
+    /// <returns></returns>
+    int getBiggestRectInMatrix(int [,] matrix, ref Rect rect)
+    {
+        int [] histogram = new int [ProceduralValues.roomWidth];
+        int maxArea = -1, area = -1;
+        //boucle de remplissage de l'histogramme
+        for (int y = 0; y < ProceduralValues.roomHeight; y++)
+        {
+            for (int x = 0; x < ProceduralValues.roomWidth; x++)
+            {
+                if(matrix[x,y] == 1)
+                {
+                    histogram[x] += 1;
+                }
+                else
+                {
+                    histogram[x] = 0;
+                }
+            }
+            Rect temp = new Rect();
+            area = getBiggestRectInHistogram(histogram, ref temp);
+            if(area > maxArea)
+            {
+                maxArea = area;
+                rect = temp;
+                rect.y = y;
+            }
+        }
+        rect.x -= (rect.width);
+        rect.y -= (rect.height-1);
+        Debug.Log(maxArea);
+        return maxArea;
+    }
+
+    /// <summary>
+    /// find the biggest rectangle of one histogram
+    /// </summary>
+    /// <param name="histogram"></param>
+    /// <param name="temp"></param>
+    /// <returns></returns>
+    int getBiggestRectInHistogram(int [] histogram, ref Rect temp)
+    {
+        int i = 0, area = 0, maxArea = 0;
+        List<int> stack = new List<int>();
+        //boucle de calcul du rectangle maximum
+        for (i = 0; i < histogram.Length; )
+        {
+            if(stack.Count == 0 || histogram[stack[0]] <= histogram[i])
+            {
+                stack.Insert(0, i);
+                i++;
+            }
+            else
+            {
+                int top = stack[0];
+                stack.RemoveAt(0);
+
+                if(stack.Count == 0)
+                {
+                    area = histogram[top] * i;
+                }
+                else
+                {
+                    area = histogram[top] * (i - stack[0] - 1);
+                }
+                if(area > maxArea)
+                {
+                    maxArea = area;
+                    temp.x = i;
+                    temp.height = histogram[top];
+                    if (stack.Count == 0)
+                    {
+                        temp.width = i;
+                    }
+                    else
+                    {
+                        temp.width = (i - stack[0] - 1);
+                    }
+                }
+            }
+        }
+        while (stack.Count > 0)
+        {
+            int top = stack[0];
+            stack.RemoveAt(0);
+            
+            if (stack.Count == 0)
+            {
+                area = histogram[top] * i;
+            }
+            else
+            {
+                area = histogram[top] * (i - stack[0] - 1);
+            }
+            if (area > maxArea)
+            {
+                maxArea = area;
+                temp.x = i;
+                temp.height = histogram[top];
+                if (stack.Count == 0)
+                {
+                    temp.width = i;
+                }
+                else
+                {
+                    temp.width = (i - stack[0] - 1);
+                }
+            }
+        }
+        return maxArea;
+    }
+
 
 }
