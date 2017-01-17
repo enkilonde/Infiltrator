@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Inventory : BaseObject
 {
-    [Range(0, 8)] public int selectedItem;
-    public Item[] itemsInInventory = new Item[8];
+    [Range(0, 7)] public int selectedItem;
+    public Item[] itemsInInventory;
 
     protected override void OnLoadEnded()
     {
@@ -32,7 +32,6 @@ public class Inventory : BaseObject
 
         for (int i = 0; i < itemsInInventory.Length; i++)
         {
-            print("ttt");
             if(itemsInInventory[i] == null)
             {
                 itemsInInventory[i] = item;

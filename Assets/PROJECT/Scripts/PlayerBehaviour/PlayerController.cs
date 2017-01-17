@@ -7,7 +7,7 @@ public class PlayerController : BaseObject
 
     public float playerSpeed = 5;
 
-    public GameObject test;
+    public Vector2 posInRoom;
 
     protected override void FirstAwake()
     {
@@ -23,6 +23,9 @@ public class PlayerController : BaseObject
         MovePlayer();
 
         PlayerLookAt();
+        
+
+        posInRoom = new Vector2(Mathf.Ceil(transform.position.x) - 16, Mathf.Ceil(transform.position.z) - 16) * -1;
 
     }
 
