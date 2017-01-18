@@ -12,8 +12,8 @@ public class Soldier : BaseEnemy
     protected override void FirstAwake()
     {
         base.FirstAwake();
-        Instantiated(State.AWAKE, 100f, 100f, viewA, viewD, spd, atkR);
+       // Instantiated(State.AWAKE, 100f, 100f, viewA, viewD, spd, atkR);
         //DefinePattern(1, transform.position, 5, 8, 0);
-        DefinePattern(patternSelect, transform.position, sizeX, sizeY, 0);
+      //  DefinePattern(patternSelect, transform.position, sizeX, sizeY, 0);
     }
 }
