@@ -22,8 +22,7 @@ public class PlayerActions : BaseObject
         base.BaseUpdate();
 
         if (Input.GetKeyDown(KeyCode.LeftAlt)) StartCoroutine(SmotherEnnemy(2, KeyCode.LeftAlt));
-
-        //if (Input.GetKeyDown(KeyCode.LeftControl)) StartCoroutine(WaitThenCallback(2, UnlockDoor, KeyCode.LeftControl));
+        if (Input.GetKeyDown(KeyCode.LeftControl)) StartCoroutine(UnlockDoor(2, KeyCode.LeftControl));
 
         if (Input.GetKeyDown(KeyCode.Space)) ActivateItem();
 
@@ -79,6 +78,46 @@ public class PlayerActions : BaseObject
         SetCompletionUI(0, false);
 
         Destroy(nearestEnnemy.gameObject);
+    }
+
+    IEnumerator UnlockDoor(float timeToWait, KeyCode touche)
+    {
+        Collider[] doorsAround = Physics.OverlapSphere(transform.position, ActionRange, 1 << LayerMask.NameToLayer("Doors"));
+        print(doorsAround.Length);
+        if (doorsAround.Length == 0) yield break;
+        float minDist = ActionRange + 1;
+
+        Transform nearesDoor = null;
+
+        for (int i = 0; i < doorsAround.Length; i++)
+        {
+            float dist = Vector3.Distance(transform.position, doorsAround[i].transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearesDoor = doorsAround[i].transform;
+            }
+        }
+
+        ChangeEnnemyColor(nearesDoor.gameObject, Color.gray);
+
+        float timer = timeToWait;
+
+        while (timer > 0)
+        {
+            yield return null;
+            SetCompletionUI(timer / timeToWait);
+            if (!Input.GetKey(touche))
+            {
+                ChangeEnnemyColor(nearesDoor.gameObject, Color.white);
+                SetCompletionUI(0, false);
+                yield break;
+            }
+            timer -= Time.deltaTime;
+        }
+        SetCompletionUI(0, false);
+
+        nearesDoor.GetComponent<DoorBehaviour>().ToggleLock(false);
     }
 
     void ChangeEnnemyColor(GameObject ennemy, Color color)
