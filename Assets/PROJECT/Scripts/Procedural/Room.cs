@@ -49,7 +49,7 @@ public class Room{
         nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
         this.roomType = roomType;
 
-        generationArray = new Vector2[nbDoor, nbPointInRoom];
+        generationArray = new Vector2[nbDoor+ProceduralValues.nbMidPoint-1, nbPointInRoom];
         roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
         this.doors = new Vector2[doors.Length];
         this.doors = doors;
@@ -86,9 +86,9 @@ public class Room{
         }
 
         //read the coordinate list and convert it into SpriteType
-        Vector2[][] listPoly = new Vector2[nbDoor*nbTrianglePerDoor][];
+        Vector2[][] listPoly = new Vector2[(nbDoor+ProceduralValues.nbMidPoint-1)*nbTrianglePerDoor][];
         int temp = 0;
-        for (int i = 0; i < nbDoor; i++)
+        for (int i = 0; i < (nbDoor + ProceduralValues.nbMidPoint - 1); i++)
         {
             for (int j = 0; j < nbTrianglePerDoor; j++)
             {
@@ -129,12 +129,31 @@ public class Room{
     public void  GenerateRoom()
     {
         //calulate a passage point that will link all doors
-        Vector2 middlePoint = new Vector2(ProceduralValues.roomWidth / 2, ProceduralValues.roomHeight / 2);
+        Vector2[] middlePoint = new Vector2[ProceduralValues.nbMidPoint];
+        for (int i = 0; i < ProceduralValues.nbMidPoint; i++)
+        {
+            float randW = UnityEngine.Random.Range(0, ProceduralValues.roomWidth);
+            float randH = UnityEngine.Random.Range(0, ProceduralValues.roomHeight);
+            middlePoint[i] = new Vector2(randW, randH);
+        }
         //place doors if they are inside the room and initilize the list for procedurale generation
         for (int doorCpt = 0; doorCpt < nbDoor; doorCpt++)
         {
             Vector2[] newWay = new Vector2[(int)(System.Math.Pow(2,ProceduralValues.roomNbIteration) - 1) + 2];
-            newWay[0] = middlePoint;
+            //find the nearest middle point
+            double min = -1;
+            int memIndex = 0;
+            for(int i = 0; i<ProceduralValues.nbMidPoint; i++)
+            {
+                double distance = Math.Sqrt(Math.Pow(middlePoint[i].x - doors[doorCpt].x, 2) + Math.Pow(middlePoint[i].y - doors[doorCpt].y, 2));
+                if (min < 0 ||  distance < min)
+                {
+                    min = distance;
+                    memIndex = i;
+                }
+            }
+            //create way between the door and the middle point
+            newWay[0] = middlePoint[memIndex];
             newWay[newWay.Length - 1] = doors[doorCpt];
 
             bool test = generateProceduralArrayRecursively(ref newWay, 0, newWay.Length-1);
@@ -142,6 +161,21 @@ public class Room{
             foreach (Vector2 element in newWay)
             {
                 generationArray[doorCpt,copyCpt] = element;
+                copyCpt++;
+            }
+        }
+        for (int midCpt = 0; midCpt < ProceduralValues.nbMidPoint-1; midCpt++)
+        {
+            Vector2[] newWay = new Vector2[(int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1) + 2];
+            //create way between two middle point
+            newWay[0] = middlePoint[midCpt + 1];
+            newWay[newWay.Length - 1] = middlePoint[midCpt];
+
+            bool test = generateProceduralArrayRecursively(ref newWay, 0, newWay.Length - 1);
+            int copyCpt = 0;
+            foreach (Vector2 element in newWay)
+            {
+                generationArray[nbDoor+midCpt, copyCpt] = element;
                 copyCpt++;
             }
         }
