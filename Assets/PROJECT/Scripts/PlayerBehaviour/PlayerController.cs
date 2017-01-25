@@ -14,7 +14,7 @@ public class PlayerController : BaseObject
 
     public bool[,] validpositions;
 
-    
+    public bool useGenerationToBlock = true;
 
     protected override void FirstAwake()
     {
@@ -81,9 +81,9 @@ public class PlayerController : BaseObject
         Vector3 displacement = direction.normalized * playerSpeed * Time.deltaTime;
 
 
-        Vector3 nextPosition = transform.position + displacement;
-        Vector3 nextPositionWithCapsule = nextPosition + displacement.normalized * (GetComponent<CapsuleCollider>().radius);
-        Vector2 nextTile = WorldToRoomLocal(nextPositionWithCapsule);
+        //Vector3 nextPosition = transform.position + displacement;
+        //Vector3 nextPositionWithCapsule = nextPosition + displacement.normalized * (GetComponent<CapsuleCollider>().radius);
+        //Vector2 nextTile = WorldToRoomLocal(nextPositionWithCapsule);
 
         if(CanMoveHere(displacement))
         transform.position += displacement;
@@ -111,6 +111,7 @@ public class PlayerController : BaseObject
 
     bool CanMoveHere(Vector3 displacement)
     {
+        if (!useGenerationToBlock) return true;
         float capsuleRadius = GetComponent<CapsuleCollider>().radius;
 
         Vector3 nextPosition = transform.position + displacement;
@@ -122,9 +123,9 @@ public class PlayerController : BaseObject
         Vector2 nextileX = WorldToRoomLocal(nextPosCapsuleX);
         Vector2 nextileY = WorldToRoomLocal(nextPosCapsuleY);
 
-        //Debug.DrawLine(transform.position + new Vector3(0, 5, 0), nextPosCapsule + new Vector3(0, 5, 0), Color.red);
-        //Debug.DrawLine(transform.position + new Vector3(0, 5, 0), nextPosCapsuleX + new Vector3(0, 5, 0), Color.red);
-        //Debug.DrawLine(transform.position + new Vector3(0, 5, 0), nextPosCapsuleY + new Vector3(0, 5, 0), Color.red);
+        Debug.DrawLine(transform.position + new Vector3(0, 5, 0), nextPosCapsule + new Vector3(0, 5, 0), Color.red);
+        Debug.DrawLine(transform.position + new Vector3(0, 5, 0), nextPosCapsuleX + new Vector3(0, 5, 0), Color.red);
+        Debug.DrawLine(transform.position + new Vector3(0, 5, 0), nextPosCapsuleY + new Vector3(0, 5, 0), Color.red);
 
         if (nextileXY.x > roomSize || nextileXY.x < 0 || nextileXY.y > roomSize || nextileXY.y < 0 || nextileX.x > roomSize || nextileX.x < 0 || nextileX.y > roomSize || nextileX.y < 0 || nextileY.x > roomSize || nextileY.x < 0 || nextileY.y > roomSize || nextileY.y < 0) return false;
 

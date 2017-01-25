@@ -183,7 +183,7 @@ public class Map : BaseObject {
                     int v = minKey(HM, n);
                     HM[v] = -1;
                     o[i] = v;
-                    Debug.Log(v);
+                    //Debug.Log(v);
                        for(int j=0;j<n;j++)
                        {
                             if (graph[v, j]!=0 && HM[j]!=-1 && ( graph[v, j] < HM[j]))
@@ -229,7 +229,7 @@ public class Map : BaseObject {
 
 
             }
-            print(lvl[o[i]].connect[0] +" " + lvl[o[i]].connect[1] + " " + lvl[o[i]].connect[2] + " " + lvl[o[i]].connect[3]);
+            //print(lvl[o[i]].connect[0] +" " + lvl[o[i]].connect[1] + " " + lvl[o[i]].connect[2] + " " + lvl[o[i]].connect[3]);
 
         }
         tracemap(o, lvl);
@@ -264,9 +264,9 @@ public class Map : BaseObject {
                             lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX() + 2);
                             lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY());
                             
-                            print(lvl[lvl[o[i]].connect[j]].getX());
-                            print(lvl[o[i]].getX());
-                            print((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f);
+                            //print(lvl[lvl[o[i]].connect[j]].getX());
+                            //print(lvl[o[i]].getX());
+                            //print((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f);
                             lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY());
 
                             lineHori[e1].SetActive(true);
@@ -300,10 +300,10 @@ public class Map : BaseObject {
                     
                 }
             }
-            print(lvl[o[i]].getX()+" "+ lvl[o[i]].getY());
+            //print(lvl[o[i]].getX()+" "+ lvl[o[i]].getY());
 
         }
-        print(lvl[2].getX() + " " + lvl[2].getY());
+        //print(lvl[2].getX() + " " + lvl[2].getY());
 
         renderMap(lvl);
 
@@ -377,7 +377,7 @@ public class Map : BaseObject {
 
         
 
-        print(n);
+        //print(n);
         prim(graph,n);
         
     }
