@@ -20,10 +20,11 @@ public class ProceduralValues
     //minimum area of rectangle for ennemis pattern
     public const int ennemisMinArea = 20;
 
-    //NEWVAR - Enki - +comment
-    //End NEWVAR
 
 
+    //Merge procédural - gameplay
+    public const float unitValue = 1;
+    public const float MeshsHeight = 5;
 
 
 

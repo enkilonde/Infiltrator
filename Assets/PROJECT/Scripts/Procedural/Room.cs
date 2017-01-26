@@ -365,7 +365,7 @@ public class Room{
         }
         rect.x -= (rect.width);
         rect.y -= (rect.height-1);
-        Debug.Log(maxArea);
+        //Debug.Log(maxArea);
         return maxArea;
     }
 

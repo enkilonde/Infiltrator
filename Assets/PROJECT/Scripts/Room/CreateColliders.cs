@@ -6,7 +6,7 @@ public class CreateColliders : BaseObject
 
     public bool[,] validpositions;
     public GameObject WallPrefab;
-    public Material wallMaterial;
+    Material wallMaterial;
 
     public int roomLenght = 32;
 
@@ -24,7 +24,7 @@ public class CreateColliders : BaseObject
                 if(!validpositions[i, j])
                 {
 
-                    Vector3 pos = new Vector3(roomLenght/2-i - 0.5f, 0, roomLenght/2-j -0.5f);
+                    Vector3 pos = new Vector3(roomLenght/2-i - 0.5f, ProceduralValues.MeshsHeight, roomLenght/2-j -0.5f);
 
                     GameObject wall = Instantiate(WallPrefab, pos, Quaternion.identity) as GameObject;
                     wall.transform.SetParent(transform);
@@ -50,7 +50,6 @@ public class CreateColliders : BaseObject
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
             meshFilters[i].gameObject.SetActive(false);
-            //Debug.Log("destroy " + meshFilters[i].gameObject.name, meshFilters[i].gameObject);
             Destroy(meshFilters[i].gameObject);
             i++;
         }
