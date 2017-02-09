@@ -17,7 +17,6 @@ public class DoorBehaviour : RoomObject
 
     }
 
-
     public void ToggleLock(bool state, bool Secondary = false)
     {
         locked = state;

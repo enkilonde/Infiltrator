@@ -24,7 +24,7 @@ public class ProceduralValues
 
     //Merge procédural - gameplay
     public const float unitValue = 1;
-    public const float MeshsHeight = 5;
+    public const float MeshsHeight = 0;
 
 
 

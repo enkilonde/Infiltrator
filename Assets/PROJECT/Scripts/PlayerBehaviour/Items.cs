@@ -8,10 +8,7 @@ public class ItemsUtility
 {
     public static Item GetItemFromEnum(ITEM_LIST enumElement)
     {
-
         return (Item)Activator.CreateInstance(Type.GetType("DebugItem"));
-
-        return null;
     }
 
 
@@ -49,7 +46,7 @@ class DebugItem : Item
     public override void Initialise()
     {
         base.Initialise();
-        Debug.Log("Initialise Item");
+        //Debug.Log("Initialise Item");
         name = "DebugItem";
         activeItem = true;
     }

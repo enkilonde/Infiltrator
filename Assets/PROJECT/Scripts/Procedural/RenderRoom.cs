@@ -37,34 +37,22 @@ public class RenderRoom : BaseObject {
         List<Vector2> roomList = new List<Vector2>();
         if (doorTop)
         {
-            roomList.Add(new Vector2(Random.Range(0, roomLenght), 0));
-            //GameObject doorUp = Instantiate(doorObject, transform.parent.position + new Vector3(roomSize - pas - roomList.Last().x, 0, roomSize - pas - roomList.Last().y), Quaternion.identity) as GameObject;
-            //doorUp.transform.SetParent(transform.parent);
-            //doorUp.name = "doorTop";
+            roomList.Add(new Vector2(Random.Range(1, roomLenght-1), 0));
             InstentiateDoor(doorObject, roomList.Last(), -pas, roomSize, "doorTop");
         }
         if (doorBottom)
         {
-            roomList.Add(new Vector2(Random.Range(0, roomLenght), roomLenght-1));
-            //GameObject doorUp = Instantiate(doorObject, transform.parent.position + new Vector3(roomSize + pas - roomList.Last().x, 0, roomSize + pas - roomList.Last().y), Quaternion.identity) as GameObject;
-            //doorUp.transform.SetParent(transform.parent);
-            //doorUp.name = "doorBottom";
+            roomList.Add(new Vector2(Random.Range(1, roomLenght-1), roomLenght-1));
             InstentiateDoor(doorObject, roomList.Last(), -pas, roomSize, "doorBottom");
         }
         if (doorLeft)
         {
-            roomList.Add(new Vector2(roomLenght-1, Random.Range(0, roomLenght)));
-            //GameObject doorUp = Instantiate(doorObject, transform.parent.position + new Vector3(roomSize + pas - roomList.Last().x, 0, roomSize + pas - roomList.Last().y), Quaternion.identity) as GameObject;
-            //doorUp.transform.SetParent(transform.parent);
-            //doorUp.name = "doorLeft";
+            roomList.Add(new Vector2(roomLenght-1, Random.Range(1, roomLenght-1)));
             InstentiateDoor(doorObject, roomList.Last(), -pas, roomSize, "doorLeft");
         }
         if (doorRight)
         {
-            roomList.Add(new Vector2(0, Random.Range(0, roomLenght)));
-            //GameObject doorUp = Instantiate(doorObject, transform.parent.position + new Vector3(roomSize - pas - roomList.Last().x, 0, roomSize - pas - roomList.Last().y), Quaternion.identity) as GameObject;
-            //doorUp.transform.SetParent(transform.parent);
-            //doorUp.name = "doorRight";
+            roomList.Add(new Vector2(0, Random.Range(1, roomLenght-1)));
             InstentiateDoor(doorObject, roomList.Last(), -pas, roomSize, "doorRight");
         }
 
