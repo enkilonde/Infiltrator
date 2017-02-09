@@ -448,4 +448,11 @@ public class Room{
     }
 
 
+    public Vector2[] getVectorDoor()
+    {
+        return doors;
+    }
+
+
+
 }
