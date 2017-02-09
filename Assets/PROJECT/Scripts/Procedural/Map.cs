@@ -61,8 +61,7 @@ public class RT
 
 public class Map : BaseObject {
 
-
-    public Room[] room;
+    
     public GameObject roomModele;
     public GameObject lineH;
     public GameObject lineV;
@@ -231,33 +230,24 @@ public class Map : BaseObject {
 
                             lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX() + 2);
                             lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY());
-
-                            
-                            
-                            //lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY());
-
-                            //lineHori[e1].SetActive(true);
                           
                             break;
                         case 1:                                                                 //Connection haut
                             lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY() + 2);
                             lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX());
-                            //lineVert[e].transform.position = new Vector3(lvl[o[i]].getX(), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f);
-                            //lineVert[e].SetActive(true);
+                           
                            
                             break;
                         case 2:                                                                 //Connection bas
                             lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY() - 2);
                             lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX());
-                            //lineVert[e].transform.position = new Vector3((lvl[o[i]].getX()), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f);
-                            //lineVert[e].SetActive(true);
+                            
                           
                             break;
                         case 3:
                             lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX() - 2);                       //Connection gauche
                             lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY());
-                           // lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY());
-                           // lineHori[e1].SetActive(true);
+                         
                            
                             break;
                     }
@@ -541,15 +531,19 @@ public class Map : BaseObject {
             graph = procMap(n);
             resultat = prim(graph, n, ref o);
             fullmap = map(resultat, n,o);
-            tracemap(o, fullmap);
+            fullmap=tracemap(o, fullmap);                                       // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
             Debug.Log("False");
 
         }
+
+
         renderLink(fullmap, o);
         renderMap(fullmap);
 
 
-        Room[] tabRoom= generateMap(fullmap.Length, fullmap);
+        Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+
+                                                                         
 
     }
 }
