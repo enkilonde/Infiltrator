@@ -155,10 +155,19 @@ public class Map : BaseObject {
 
     }
 
-
+    
+    
     public RT[] map(int[] r, int n, int[] o)
     {
+        string[] randnb = { "1234", "1243", "1324", "1342", "1423", "1432",
+            "2134", "2143", "2314", "2341", "2413", "2431",
+            "3124","3142", "3214", "3241", "3412", "3421"
+            , "4123", "4132", "4213", "4231", "4312", "4321" };
 
+        var m = new Dictionary<int,float>();
+        
+
+        //int ar;
         int a;
         RT[] lvl = new RT[n];
         RT[] lvl1 = new RT[n];
@@ -171,91 +180,110 @@ public class Map : BaseObject {
 
         for (int i = 0; i < o.Length; i++)
         {
+            int l = Random.Range(0, 24);
             a = 0;
+            float a1 = Mathf.Sqrt(Mathf.Pow(lvl[o[i]].getX() + 2, 2) + Mathf.Pow(lvl[o[i]].getY(), 2));
+            float a2 = Mathf.Sqrt(Mathf.Pow(lvl[o[i]].getX(), 2) + Mathf.Pow(lvl[o[i]].getY() + 2, 2));
+            float a3 = Mathf.Sqrt(Mathf.Pow(lvl[o[i]].getX(), 2) + Mathf.Pow(lvl[o[i]].getY() - 2, 2));
+            float a4 = Mathf.Sqrt(Mathf.Pow(lvl[o[i]].getX() - 2, 2) + Mathf.Pow(lvl[o[i]].getY(), 2));
+
+            //Debug.Log(a1 + " " + a2 + " " + a3 + " " + a4 + "    --------------");
+
+            m.Add(0,a1);
+            m.Add(1, a2);
+            m.Add(2, a3);
+            m.Add(3, a4);
 
             for (int j = 1; j < r.Length; j++)
             {
+
+
                 if (r[j] == o[i])
                 {
+
                     if (a == 4)
                     {
                         Debug.Log("Exception");
                         return lvl1;
                     }
+                    //ar = randnb[l][a] - 49;
                     //Debug.Log(j + "      " + a + "         " + i);
                     //Debug.Log(r[j]+ "      " + a+ "         "+ o[i]);
-                    lvl[o[i]].connect[a] = j;
-                    lvl[j].connect[3 - a] = o[i];
-                    a++;
-                }
+                    
 
+                    int cpt=0;
+                    
+                    for(int ik=0;ik<4;ik++)
+                    {
+                        if (m.ContainsKey(ik))
+                        {
+                            for(int lo=ik+1;lo<4;lo++)
+                            {
+                                if(m.ContainsKey(lo))
+                                {
+                                    if(m[ik]>m[lo])
+                                    {
+                                        cpt = ik;
 
-            }
-          
+                                    }
+                                    else
+                                    {
+                                        cpt = lo;
+                                    }
+                                }
+                            }
+                            
+                        }
 
-        }
-        
-        return lvl;
-        
-    }
+                    }
+                    //Debug.Log(cpt);
+                    m.Remove(cpt);
+                    lvl[o[i]].connect[cpt] = j;
+                    lvl[j].connect[3 - cpt] = o[i];
 
-    public RT[] tracemap(int[] o, RT[] lvl)
-    {
-        string[] randnb = { "1234", "1243", "1324", "1342", "1423", "1432",
-            "2134", "2143", "2314", "2341", "2413", "2431",
-            "3124","3142", "3214", "3241", "3412", "3421"
-            , "4123", "4132", "4213", "4231", "4312", "4321" };
-        int j;
-        lvl[0].setX(0);
-        lvl[0].setY(0);
-        
-        
-
-        for (int i = 0; i < o.Length; i++)
-        {
-            int l = Random.Range(0, 24);
-            //Debug.Log(randnb[l]);
-
-
-            for (int r = 0; r < 4; r++)
-            {
-
-                j = randnb[l][r] - 49;
-
-                if (lvl[o[i]].connect[j] != -1)
-                {
-                    switch (j)
+                    // Remove key
+                    switch (cpt)
                     {
                         case 0:                                             //Connection droite
 
-                            lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX() + 2);
-                            lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY());
-                          
+                            lvl[lvl[o[i]].connect[cpt]].setX(lvl[o[i]].getX() + 2);
+                            lvl[lvl[o[i]].connect[cpt]].setY(lvl[o[i]].getY());
+
                             break;
                         case 1:                                                                 //Connection haut
-                            lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY() + 2);
-                            lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX());
-                           
-                           
+                            lvl[lvl[o[i]].connect[cpt]].setY(lvl[o[i]].getY() + 2);
+                            lvl[lvl[o[i]].connect[cpt]].setX(lvl[o[i]].getX());
+
+
                             break;
                         case 2:                                                                 //Connection bas
-                            lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY() - 2);
-                            lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX());
-                            
-                          
+                            lvl[lvl[o[i]].connect[cpt]].setY(lvl[o[i]].getY() - 2);
+                            lvl[lvl[o[i]].connect[cpt]].setX(lvl[o[i]].getX());
+
+
                             break;
                         case 3:
-                            lvl[lvl[o[i]].connect[j]].setX(lvl[o[i]].getX() - 2);                       //Connection gauche
-                            lvl[lvl[o[i]].connect[j]].setY(lvl[o[i]].getY());
-                         
-                           
+                            lvl[lvl[o[i]].connect[cpt]].setX(lvl[o[i]].getX() - 2);                       //Connection gauche
+                            lvl[lvl[o[i]].connect[cpt]].setY(lvl[o[i]].getY());
+
+
                             break;
                     }
+
+                    a++;
+
                 }
+
+
             }
+
+            m.Clear();
         }
+        
         return lvl;
+        
     }
+
 
     public void renderLink(RT[] lvl,int[] o)
     {
@@ -367,9 +395,9 @@ public class Map : BaseObject {
             }
         }
 
-       // for (int i = 0; i < n; i++) 
-           // Debug.Log(graph[0, i] + " " + graph[1, i] + " " + graph[2, i] +" "+ graph[3, i] + " " + graph[4, i] + " " + graph[5, i] + " " + graph[6, i] + " " +
-           //     graph[7, i] + " " + graph[8, i] + " " + graph[9, i] + " " + graph[10, i] + " " + graph[11, i] + " " + graph[12, i] + " " + graph[13, i] + " " + graph[14, i]);
+        //for (int i = 0; i < n; i++)
+        //    Debug.Log(graph[0, i] + " " + graph[1, i] + " " + graph[2, i] + " " + graph[3, i] + " " + graph[4, i] + " " + graph[5, i] + " " + graph[6, i] + " " +
+        //        graph[7, i] + " " + graph[8, i] + " " + graph[9, i] );
         return graph;
     }
 
@@ -506,17 +534,20 @@ public class Map : BaseObject {
     // Use this for initialization
     void Start ()
     {
-        int n=15;
+        int n=20;
         int[] o = new int[n - 1];
-        
+
         //int[,] graph =
-        //{                       { 0, 0, 0, 10, 0, 0,0},
-        //                        { 1, 0, 6, 3, 1, 0,6},
-        //                        { 0, 6, 0, 0, 5, 2,0},
-        //                        { 3, 3, 0, 0, 1, 0,2},
-        //                        { 0, 1, 5, 1, 0, 4,2},
-        //                        { 0, 0, 2, 0, 4, 0,0},
-        //                        { 0,0,0 , 0, 0, 0,1},
+        //{                       { 0, 0, 0, 0, 5, 0,0,0,0,0},
+        //                        { 0, 0, 29, 87, 0, 87,0,0,0,0},
+        //                        { 0, 29, 0, 0, 0, 88,0,0,0,0},
+        //                        { 0, 87, 0, 0, 49,0,0,0,61,0},
+        //                        { 5, 0, 0,49, 0, 0,0,0,27,0},
+        //                        { 0, 87, 88, 0, 0, 0,0,79,0,0},
+        //                        { 0, 0, 0, 0, 0, 0,0,0,27,0},
+        //                        { 0, 0, 0, 0,0, 79, 0,0,49,7},
+        //                        { 0, 0, 0,61, 27, 0,27,49,0,10},
+        //                        { 0, 0, 0, 0,0, 0,0,7,10,0},
         //};
 
         int[,] graph=procMap(n);
@@ -524,14 +555,14 @@ public class Map : BaseObject {
         
         int[] resultat= prim(graph, n, ref o);
         RT[] fullmap=map(resultat,n,o);
-        tracemap(o, fullmap);
+        
         while (!checkMap(fullmap))
         {
             o = new int[n - 1];
             graph = procMap(n);
             resultat = prim(graph, n, ref o);
             fullmap = map(resultat, n,o);
-            fullmap=tracemap(o, fullmap);                                       // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
+                                              // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
             Debug.Log("False");
 
         }
@@ -543,7 +574,7 @@ public class Map : BaseObject {
 
         Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
 
-                                                                         
+                                                    
 
     }
 }
