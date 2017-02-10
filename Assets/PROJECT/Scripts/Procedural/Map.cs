@@ -70,6 +70,8 @@ public class Map : BaseObject {
     public GameObject[] lineHori;
     public GameObject[] lineVert;
 
+    public RT[] fullmap;
+    public Room[] rooms;
 
     int inf = 999;
 
@@ -511,6 +513,63 @@ public class Map : BaseObject {
 
     }
     
+    public Room[] generateMap(RT[] lvl)
+    {
+        Room[] map = new Room[lvl.Length];
+
+        List<List<Vector2>> temp = new List<List<Vector2>>();
+
+        for (int i = 0; i < lvl.Length; i++) // Création d'une Room
+        {
+            RT currentRoom = lvl[i];
+            temp.Add(new List<Vector2>());
+
+            for (int j = 0; j < currentRoom.connect.Length; j++) // Génération du tableau de vector2 indiquant l'emplacement des portes
+            {
+                int connect = currentRoom.connect[j];
+                if (connect == -1) continue;
+                int randomPos;
+                switch (j)
+                {
+                    case 0: // droite
+                        if (connect >= i) break;
+                        randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
+                        temp[i].Add(new Vector2(0, randomPos));
+                        temp[connect].Add(new Vector2(ProceduralValues.roomWidth - 1, randomPos));
+                        break;
+                    case 1: // haut
+                        if (connect >= i) break;
+                        randomPos = Random.Range(1, ProceduralValues.roomWidth - 1);
+                        temp[i].Add(new Vector2(randomPos, 0));
+                        temp[connect].Add(new Vector2(randomPos, ProceduralValues.roomHeight - 1));
+                        break;
+                    case 2: // bas
+                        if (connect >= i) break;
+                        randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
+                        temp[i].Add(new Vector2(randomPos, ProceduralValues.roomHeight - 1));
+                        temp[connect].Add(new Vector2(randomPos, 0));
+                        break;
+                    case 3: // gauche
+                        if (connect >= i) break;
+                        randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
+                        temp[i].Add(new Vector2(ProceduralValues.roomWidth - 1, randomPos));
+                        temp[connect].Add(new Vector2(0, randomPos));
+                        break;
+                }// End switch
+            } // end gen doors
+        } // end room creation
+
+
+        for (int i = 0; i < lvl.Length; i++)
+        {
+            Vector2[] doors = temp[i].ToArray();
+            map[i] = new Room(ref doors, RoomType.EMPTY);
+        }
+
+
+        return map;
+    }
+
     public bool checkMap(RT[] lvl)
     {
         for(int i=0;i<lvl.Length;i++)
@@ -532,7 +591,7 @@ public class Map : BaseObject {
 
 
     // Use this for initialization
-    void Start ()
+    protected override void MinimapGeneration()
     {
         int n=20;
         int[] o = new int[n - 1];
@@ -554,7 +613,7 @@ public class Map : BaseObject {
         n = (int)System.Math.Sqrt(graph.Length);
         
         int[] resultat= prim(graph, n, ref o);
-        RT[] fullmap=map(resultat,n,o);
+        fullmap=map(resultat,n,o);
         
         while (!checkMap(fullmap))
         {
@@ -568,13 +627,26 @@ public class Map : BaseObject {
         }
 
 
-        renderLink(fullmap, o);
-        renderMap(fullmap);
+        //renderLink(fullmap, o);
+        //renderMap(fullmap);
 
 
-        Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+        //Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+        rooms = generateMap(fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
 
-                                                    
+
 
     }
+
+    protected override void RoomGeneration()
+    {
+        base.RoomGeneration();
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            RenderRoom.CreateRoom(fullmap[i].getX(), fullmap[i].getY(), rooms[i], i);
+
+        }
+    }
+
+
 }
