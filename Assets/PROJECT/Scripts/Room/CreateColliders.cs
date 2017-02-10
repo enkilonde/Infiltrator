@@ -10,9 +10,9 @@ public class CreateColliders : BaseObject
 
     public int roomLenght = 32;
 
-    protected override void SecondAwake()
+    protected override void CollidersGeneration()
     {
-        base.SecondAwake();
+        base.CollidersGeneration();
 
         SpriteType[,] rawValidPos = transform.parent.GetComponentInChildren<RenderRoom>().room.getRoomMatrix();
         validpositions = new bool[rawValidPos.GetLength(0), rawValidPos.GetLength(1)];
