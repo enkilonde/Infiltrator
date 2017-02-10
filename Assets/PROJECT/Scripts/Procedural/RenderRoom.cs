@@ -136,8 +136,6 @@ public class RenderRoom : BaseObject {
         salle.transform.position = new Vector3(x * ProceduralValues.roomWidth, 0, y * ProceduralValues.roomWidth);
         salle.transform.localScale = new Vector3(ProceduralValues.roomWidth/10f, 1, ProceduralValues.roomWidth/10f);
         ApplyRender(room, salle);
-
-
     }
 
     protected override void BaseUpdate()

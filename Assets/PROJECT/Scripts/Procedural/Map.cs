@@ -494,7 +494,7 @@ public class Map : BaseObject {
             }
 
            
-            map[i] = new Room(ref tmp,RoomType.NONE);
+            map[i] = new Room(ref tmp,RoomType.NORMAL);
 
             
 

@@ -24,39 +24,37 @@ public class Room{
     {
         roomType = RoomType.NONE;
     }
-    public Room(ref Vector2 [] doors)
+    public Room(ref Vector2 [] doors, RoomType roomType = RoomType.EMPTY)
     {
-        nbDoor = doors.Length;
-        nbPointPerDoor = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
-        nbPointInRoom = nbDoor * nbPointPerDoor;
-        nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
-        roomType = RoomType.EMPTY;
+        if (roomType == RoomType.EMPTY || roomType == RoomType.TREASURE)
+        {
+            roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
+            this.doors = new Vector2[doors.Length];
+            this.doors = doors;
+            CreateEmptyRoom();
+            if(roomType == RoomType.TREASURE)
+            {
+                Rect temp = new Rect(new Vector2(-1 + (ProceduralValues.roomWidth / 2), -1 + (ProceduralValues.roomHeight / 2)), new Vector2(2, 2));
+                listRect.Add(temp);
+            }
+        }
+        else
+        {
+            nbDoor = doors.Length;
+            nbPointPerDoor = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+            nbPointInRoom = nbDoor * nbPointPerDoor;
+            nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+            this.roomType = roomType;
 
-        generationArray = new Vector2[nbDoor,nbPointInRoom];
-        roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
-        this.doors = new Vector2[doors.Length];
-        this.doors = doors;
+            generationArray = new Vector2[nbDoor + ProceduralValues.nbMidPoint - 1, nbPointInRoom];
+            roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
+            this.doors = new Vector2[doors.Length];
+            this.doors = doors;
 
-        GenerateRoom();
-        CreateRoom();
-        cutRoomInRect();
-    }
-    public Room(ref Vector2 [] doors, RoomType roomType)
-    {
-        nbDoor = doors.Length;
-        nbPointPerDoor = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
-        nbPointInRoom = nbDoor * nbPointPerDoor;
-        nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
-        this.roomType = roomType;
-
-        generationArray = new Vector2[nbDoor+ProceduralValues.nbMidPoint-1, nbPointInRoom];
-        roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
-        this.doors = new Vector2[doors.Length];
-        this.doors = doors;
-
-        GenerateRoom();
-        CreateRoom();
-        cutRoomInRect();
+            GenerateRoom();
+            CreateRoom();
+            cutRoomInRect();
+        }
     }
 
     //accessors
@@ -68,8 +66,51 @@ public class Room{
     {
         return listRect;
     }
+    public Vector2[] getVectorDoor()
+    {
+        return doors;
+    }
 
     //methodes
+    /// <summary>
+    /// create an empty room (full ground sprite)
+    /// </summary>
+    public void CreateEmptyRoom()
+    {
+        //place Ground everywhere
+        for (int i = 0; i < ProceduralValues.roomWidth; i++)
+        {
+            for (int j = 0; j < ProceduralValues.roomHeight; j++)
+            {
+                roomMatrix[i, j] = SpriteType.GROUND;
+            }
+        }
+
+        //place doors if they are inside the room and initilize the list for procedurale generation
+        for (int i = 0; i < doors.Length; i++)
+        {
+            int x = (int)doors[i].x;
+            if (x < 0)
+            {
+                x = 0;
+            }
+            else if (x >= ProceduralValues.roomWidth)
+            {
+                x = ProceduralValues.roomWidth - 1;
+            }
+            int y = (int)doors[i].y;
+            if (y < 0)
+            {
+                y = 0;
+            }
+            else if (y >= ProceduralValues.roomHeight)
+            {
+                y = ProceduralValues.roomHeight - 1;
+            }
+            roomMatrix[x, y] = SpriteType.DOOR;
+        }
+    }
+
     /// <summary>
     /// create matrix room from the array of coordinates
     /// </summary>
@@ -81,7 +122,7 @@ public class Room{
             for (int j = 0; j < ProceduralValues.roomHeight; j++)
             {
                 roomMatrix[i, j] = SpriteType.ROCK;
-                roomMatrix[i, j] = SpriteType.ROCK;
+                //roomMatrix[i, j] = SpriteType.ROCK;
             }
         }
 
@@ -446,13 +487,6 @@ public class Room{
         }
         return maxArea;
     }
-
-
-    public Vector2[] getVectorDoor()
-    {
-        return doors;
-    }
-
 
 
 }
