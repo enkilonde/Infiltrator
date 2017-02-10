@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class RT
 {
-    public int x;
-    public int y;
+    private int x;
+    private int y;
     public int[] connect;                   // A l'indice 0 -> connexion a droite
                                             // A l'indice 1 -> connexion en haut
                                             // A l'indice 2 -> connexion en bas
@@ -70,9 +70,6 @@ public class Map : BaseObject {
     public GameObject[] lineHori;
     public GameObject[] lineVert;
 
-    public Room[] rooms;
-
-    public RT[] fullmap;
 
     int inf = 999;
 
@@ -347,6 +344,7 @@ public class Map : BaseObject {
         }
 }
 
+
     public void renderMap(RT[] lvl)
     {
         for (int i = 0; i < lvl.Length; i++)
@@ -359,6 +357,7 @@ public class Map : BaseObject {
         }
        
     }
+
 
     public int[,] procMap(int n)
     {
@@ -494,13 +493,7 @@ public class Map : BaseObject {
                 }
             }
 
-            string doorsDebug = "";
-            for (int j = 0; j < tmp.Length; j++)
-            {
-                doorsDebug += "   " + tmp[j];
-            }
-
-            print("Add new room at " + i + ", connextion : " + doorsDebug);
+           
             map[i] = new Room(ref tmp,RoomType.NONE);
 
             
@@ -517,73 +510,7 @@ public class Map : BaseObject {
         return map;
 
     }
-
-
-    public Room[] generateMap(RT[] lvl)
-    {
-        Room[] map = new Room[lvl.Length];
-
-        List<List<Vector2>> temp = new List<List<Vector2>>();
-
-        for (int i = 0; i < lvl.Length; i++) // Création d'une Room
-        {
-            RT currentRoom = lvl[i];
-            temp.Add(new List<Vector2>());
-
-            for (int j = 0; j < currentRoom.connect.Length; j++) // Génération du tableau de vector2 indiquant l'emplacement des portes
-            {
-                int connect = currentRoom.connect[j];
-                if (connect == -1) continue;
-                int randomPos;
-                switch (j)
-                {
-                    case 0: // droite
-                        if (connect >= i) break;
-                        randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
-                        temp[i].Add(new Vector2(0, randomPos));
-                        temp[connect].Add(new Vector2(ProceduralValues.roomWidth - 1, randomPos));
-                        break;
-
-                    case 1: // haut
-                        if (connect >= i) break;
-                        randomPos = Random.Range(1, ProceduralValues.roomWidth - 1);
-                        temp[i].Add(new Vector2(randomPos, 0));
-                        temp[connect].Add(new Vector2(randomPos, ProceduralValues.roomHeight - 1));
-                        break;
-
-                    case 2: // bas
-                        if (connect >= i) break;
-                        randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
-                        temp[i].Add(new Vector2(randomPos, ProceduralValues.roomHeight - 1));
-                        temp[connect].Add(new Vector2(randomPos, 0));
-                        break;
-
-                    case 3: // gauche
-                        if (connect >= i) break;
-                        randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
-                        temp[i].Add(new Vector2(ProceduralValues.roomWidth - 1, randomPos));
-                        temp[connect].Add(new Vector2(0, randomPos));
-                        break;
-                } // end switch
-
-
-            } // end gen doors
-
-
-
-        } // end room creation
-
-        for (int i = 0; i < lvl.Length; i++)
-        {
-            Vector2[] doors = temp[i].ToArray();
-            map[i] = new Room(ref doors, RoomType.EMPTY);
-        }
-
-
-        return map;
-    }
-
-
+    
     public bool checkMap(RT[] lvl)
     {
         for(int i=0;i<lvl.Length;i++)
@@ -604,16 +531,10 @@ public class Map : BaseObject {
     }
 
 
-
     // Use this for initialization
-    protected override void MinimapGeneration()
+    void Start ()
     {
-<<<<<<< fb88251190bcaba39651e91537b8b8244b460dae
         int n=20;
-=======
-        base.MinimapGeneration();
-        int n=15;
->>>>>>> Fusion de la minimap et de la génération des rooms
         int[] o = new int[n - 1];
 
         //int[,] graph =
@@ -633,13 +554,8 @@ public class Map : BaseObject {
         n = (int)System.Math.Sqrt(graph.Length);
         
         int[] resultat= prim(graph, n, ref o);
-<<<<<<< fb88251190bcaba39651e91537b8b8244b460dae
         RT[] fullmap=map(resultat,n,o);
         
-=======
-        fullmap=map(resultat,n,o);
-        tracemap(o, fullmap);
->>>>>>> Fusion de la minimap et de la génération des rooms
         while (!checkMap(fullmap))
         {
             o = new int[n - 1];
@@ -652,30 +568,13 @@ public class Map : BaseObject {
         }
 
 
-        //renderLink(fullmap, o);
-        //renderMap(fullmap);
-
-        //rooms = generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
-
-        rooms = generateMap(fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+        renderLink(fullmap, o);
+        renderMap(fullmap);
 
 
-<<<<<<< fb88251190bcaba39651e91537b8b8244b460dae
+        Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+
                                                     
-=======
->>>>>>> Fusion de la minimap et de la génération des rooms
 
     }
-
-    protected override void RoomGeneration()
-    {
-        base.RoomGeneration();
-
-        for (int i = 0; i < rooms.Length; i++)
-        {
-            RenderRoom.CreateRoom(fullmap[i].getX(), fullmap[i].getY(), rooms[i], i);
-        }
-
-    }
-
 }
