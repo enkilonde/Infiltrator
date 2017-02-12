@@ -20,7 +20,13 @@ public class ProceduralValues
     //minimum area of rectangle for ennemis pattern
     public static int ennemisMinArea = 20;
 
-
+    //Enemy procedural values
+    public static float enemyMaxHealth = 100f;
+    public static float enemyStartHealth = 100f;
+    public static float enemyViewAngle = 60f;
+    public static float enemyViewDistance = 5f;
+    public static float enemySpeed = 3f;
+    public static float enemyAtkRange = 1.5f;
 
     //Merge procédural - gameplay
     public const float unitValue = 1;

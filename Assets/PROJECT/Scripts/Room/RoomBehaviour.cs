@@ -19,6 +19,14 @@ public class RoomBehaviour : RoomObject
 
     }
 
+    protected override void MonsterInstantiate()
+    {
+        base.MonsterInstantiate();
+        Room room = GetComponentInChildren<RenderRoom>().room;
+        Ennemys = GetComponent<PatternGenerator>().SpawnEnemies(room, ProceduralValues.roomWidth/2, ProceduralValues.roomHeight/2).ToArray();
+        
+    }
+
     void InitRoom(bool initDoors = true, bool initButtons = true, bool initEnemys = true)
     {
         if (initDoors) doors = GetComponentsInChildren<DoorBehaviour>();

@@ -80,7 +80,8 @@ public class BaseEnemy : BaseObject {
     {
         if(transformView = transform.FindChild("ViewCanvas").FindChild("DisplayView").GetComponent<RectTransform>())
         {
-            transformView.eulerAngles = new Vector3(90, 0, viewA * 0.5f);
+            //transformView.eulerAngles = new Vector3(90, 0, viewA * 0.5f);
+            transformView.eulerAngles = new Vector3(90, 0, -transform.eulerAngles.y + viewA * 0.5f);
             transformView.sizeDelta = new Vector2(viewD * 2.05f, viewD * 2.05f);
         }
         else
