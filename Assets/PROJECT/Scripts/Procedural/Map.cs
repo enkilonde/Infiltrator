@@ -563,7 +563,7 @@ public class Map : BaseObject {
         for (int i = 0; i < lvl.Length; i++)
         {
             Vector2[] doors = temp[i].ToArray();
-            map[i] = new Room(ref doors, RoomType.EMPTY);
+            map[i] = new Room(ref doors, RoomType.NORMAL);
         }
 
 

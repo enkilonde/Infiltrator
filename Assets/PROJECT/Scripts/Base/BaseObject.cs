@@ -31,6 +31,10 @@ public class BaseObject : MonoBehaviour
 
         yield return null;
 
+        CollidersGeneration();
+
+        yield return null;
+
         MonsterInstantiate();
 
         yield return null;
@@ -51,6 +55,9 @@ public class BaseObject : MonoBehaviour
 
     //On va générer les salles (fait par Nelson)
     protected virtual void RoomGeneration() { }
+
+    //On créée les colliders pour chaque salle
+    protected virtual void CollidersGeneration() { }
 
     //On fait pop les ennemis et items dans les salles
     protected virtual void MonsterInstantiate() { }
