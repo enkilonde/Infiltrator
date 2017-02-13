@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[SelectionBase]
 public class RoomBehaviour : RoomObject
 {
     public DoorBehaviour[] doors;
     public ButtonUnlockDoors[] buttonsUnlock;
     public BaseEnemy[] Ennemys;
+    public Room roomClass;
 
     protected override void FirstAwake()
     {
@@ -22,9 +24,8 @@ public class RoomBehaviour : RoomObject
     protected override void MonsterInstantiate()
     {
         base.MonsterInstantiate();
-        Room room = GetComponentInChildren<RenderRoom>().room;
-        Ennemys = GetComponent<PatternGenerator>().SpawnEnemies(room, ProceduralValues.roomWidth/2, ProceduralValues.roomHeight/2, transform.position).ToArray();
-        
+        Ennemys = GetComponent<PatternGenerator>().SpawnEnemies(roomClass, ProceduralValues.roomWidth / 2, ProceduralValues.roomHeight / 2, transform.position).ToArray();
+
     }
 
     void InitRoom(bool initDoors = true, bool initButtons = true, bool initEnemys = true)
