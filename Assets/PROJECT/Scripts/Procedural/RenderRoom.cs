@@ -131,9 +131,11 @@ public class RenderRoom : BaseObject {
     }
 
 
-    public static void CreateRoom(int x, int y, Room room, int roomIndex)
+    public static void CreateRoom(int x, int y, Room room, int roomIndex, Transform parent)
     {
         //GameObject salle = GameObject.CreatePrimitive(PrimitiveType.Plane);
+
+
         GameObject salle = Instantiate<GameObject>(Resources.Load<GameObject>("Salle"));
         GameObject plane = salle.GetComponentInChildren<MeshCollider>().gameObject;
         salle.name = "Room " + roomIndex;
@@ -144,6 +146,8 @@ public class RenderRoom : BaseObject {
         room.roomIndex = roomIndex;
 
         ApplyRender(room, plane);
+
+        salle.transform.SetParent(parent);
     }
 
     protected override void BaseUpdate()
