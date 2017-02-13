@@ -287,7 +287,7 @@ public class Map : BaseObject {
     }
 
 
-    public void renderLink(RT[] lvl,int[] o)
+    public void renderLink(RT[] lvl,int[] o, Vector3 offset = default(Vector3), GameObject Parent = null)
     {
         int e = 0;
         int e1 = 0;
@@ -297,6 +297,11 @@ public class Map : BaseObject {
             lineVert[i] = Instantiate(lineV, new Vector3(0f, 0f, 10f), Quaternion.identity) as GameObject;
             lineHori[i].SetActive(false);
             lineVert[i].SetActive(false);
+            if(Parent)
+            {
+                lineHori[i].transform.SetParent(Parent.transform);
+                lineVert[i].transform.SetParent(Parent.transform);
+            }
         }
 
         for (int i = 0; i < o.Length; i++)
@@ -317,26 +322,26 @@ public class Map : BaseObject {
                         case 0:                                             //Connection droite
                             
 
-                            lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY());
+                            lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY()) + offset;
 
                             lineHori[e1].SetActive(true);
                             e1++;
                             break;
                         case 1:                                                                 //Connection haut
                             
-                            lineVert[e].transform.position = new Vector3(lvl[o[i]].getX(), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f);
+                            lineVert[e].transform.position = new Vector3(lvl[o[i]].getX(), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f) + offset;
                             lineVert[e].SetActive(true);
                             e++;
                             break;
                         case 2:                                                                 //Connection bas
                             
-                            lineVert[e].transform.position = new Vector3((lvl[o[i]].getX()), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f);
+                            lineVert[e].transform.position = new Vector3((lvl[o[i]].getX()), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f) + offset;
                             lineVert[e].SetActive(true);
                             e++;
                             break;
                         case 3:
                             
-                            lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY());
+                            lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY()) + offset;
                             lineHori[e1].SetActive(true);
                             e1++;
                             break;
@@ -347,15 +352,15 @@ public class Map : BaseObject {
 }
 
 
-    public void renderMap(RT[] lvl)
+    public void renderMap(RT[] lvl, Vector3 offset = default(Vector3), GameObject Parent = null)
     {
         for (int i = 0; i < lvl.Length; i++)
         {
             tabRoom[i] = Instantiate(roomModele, new Vector3(0f, 0f, 0f), Quaternion.identity) as GameObject;
-            tabRoom[i].transform.position = new Vector3(lvl[i].getX(), lvl[i].getY());
+            tabRoom[i].transform.position = new Vector3(lvl[i].getX(), lvl[i].getY()) + offset;
             tabRoom[i].SetActive(true);
             tabRoom[i].transform.GetChild(0).transform.GetComponentInChildren<TextMesh>().text = "" + i;
-
+            if (Parent) tabRoom[i].transform.SetParent(Parent.transform);
         }
        
     }
@@ -637,23 +642,39 @@ public class Map : BaseObject {
         }
 
 
-        //renderLink(fullmap, o);
-        //renderMap(fullmap);
 
 
         //Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
         rooms = generateMap(fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
 
 
+        RenderMinimap(o);
+    }
 
+    void RenderMinimap(int[] o)
+    {
+        Vector3 offset = new Vector3(100, 100, 100);
+        GameObject Minimap = new GameObject("Minimap");
+        Camera miniCam = Minimap.AddComponent<Camera>();
+        miniCam.orthographic = true;
+        miniCam.orthographicSize = 15;
+        miniCam.rect = new Rect(0.75f, 0.75f, 0.25f, 0.25f);
+        miniCam.clearFlags = CameraClearFlags.Nothing;
+
+        Minimap.transform.position = offset - new Vector3(0, 0, 10);
+        renderLink(fullmap, o, offset, Minimap);
+        renderMap(fullmap, offset, Minimap);
     }
 
     protected override void RoomGeneration()
     {
         base.RoomGeneration();
+
+        GameObject roomParent = new GameObject("All Rooms");
+
         for (int i = 0; i < rooms.Length; i++)
         {
-            RenderRoom.CreateRoom(fullmap[i].getX(), fullmap[i].getY(), rooms[i], i);
+            RenderRoom.CreateRoom(fullmap[i].getX(), fullmap[i].getY(), rooms[i], i, roomParent.transform);
 
         }
     }
