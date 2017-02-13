@@ -35,7 +35,15 @@ public class BaseObject : MonoBehaviour
 
         yield return null;
 
+        LinkDoors();
+
+        yield return null;
+
         MonsterInstantiate();
+
+        yield return null;
+
+        SpawnPlayer();
 
         yield return null;
 
@@ -59,9 +67,13 @@ public class BaseObject : MonoBehaviour
     //On créée les colliders pour chaque salle
     protected virtual void CollidersGeneration() { }
 
+    //On link les portes entre elles
+    protected virtual void LinkDoors() { }
+
     //On fait pop les ennemis et items dans les salles
     protected virtual void MonsterInstantiate() { }
 
+    protected virtual void SpawnPlayer() { }
 
     protected virtual void OnLoadEnded()
     {

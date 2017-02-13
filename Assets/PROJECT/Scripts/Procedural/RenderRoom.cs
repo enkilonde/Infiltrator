@@ -6,31 +6,33 @@ using System.Linq;
 
 public class RenderRoom : BaseObject {
     
+
+
+
+    public Room room;
+    public Material mat;
+
+
+    [Header("Test")]
     //OUAI, c'est moche, mais c'est plus pratique pour l'inspector
     public bool doorTop = true;
     public bool doorBottom = true;
     public bool doorLeft = true;
     public bool doorRight = true;
 
-    //public bool[] doorsBool = new bool[4];
-    public int roomLenght = 32;
-
-    public Room room;
-    public Material mat;
-
     protected override void FirstAwake()
     {
 
-        init();
+        //init();
 
-        ApplyRender(room, gameObject);
+        //ApplyRender(room, gameObject);
 
     }
 
     void init()
     {
         GameObject doorObject = Resources.Load("Door") as GameObject;
-
+        int roomLenght = ProceduralValues.roomHeight;
         int roomSize = roomLenght/2;
         float pas = ProceduralValues.unitValue/2;
         //pas = 0;
@@ -131,11 +133,17 @@ public class RenderRoom : BaseObject {
 
     public static void CreateRoom(int x, int y, Room room, int roomIndex)
     {
-        GameObject salle = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        //GameObject salle = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        GameObject salle = Instantiate<GameObject>(Resources.Load<GameObject>("Salle"));
+        GameObject plane = salle.GetComponentInChildren<MeshCollider>().gameObject;
         salle.name = "Room " + roomIndex;
         salle.transform.position = new Vector3(x * ProceduralValues.roomWidth, 0, y * ProceduralValues.roomWidth);
-        salle.transform.localScale = new Vector3(ProceduralValues.roomWidth/10f, 1, ProceduralValues.roomWidth/10f);
-        ApplyRender(room, salle);
+        plane.transform.localScale = new Vector3(ProceduralValues.roomWidth/10f, 1, ProceduralValues.roomWidth/10f);
+        salle.GetComponent<RoomBehaviour>().roomClass = room;
+        room.gameobject = salle;
+        room.roomIndex = roomIndex;
+
+        ApplyRender(room, plane);
     }
 
     protected override void BaseUpdate()

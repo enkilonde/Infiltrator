@@ -14,7 +14,16 @@ public class PlayerActions : BaseObject
     {
         base.FirstAwake();
         inventory = GetComponent<Inventory>();
-        completionImage = GameObject.Find("CompletionImage").GetComponent<Image>();
+        //completionImage = GameObject.Find("CompletionImage").GetComponent<Image>();
+    }
+
+    protected override void SecondAwake()
+    {
+        base.SecondAwake();
+
+        GameObject PersonalCanvas = Instantiate<GameObject>(Resources.Load<GameObject>("PlayerCanvas"));
+        PersonalCanvas.GetComponent<FollowTarget>().targetToFollow = transform;
+        completionImage = PersonalCanvas.transform.GetChild(0).GetComponent<Image>();
     }
 
     protected override void BaseUpdate()

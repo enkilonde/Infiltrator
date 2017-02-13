@@ -5,7 +5,7 @@ public class DoorBehaviour : RoomObject
 {
     public DoorBehaviour TargetDoor;
 
-    bool locked;
+    public bool locked;
 
     protected override void SecondAwake()
     {
@@ -13,7 +13,7 @@ public class DoorBehaviour : RoomObject
 
         ToggleLock(true);
 
-        if (TargetDoor == null) gameObject.SetActive(false);
+        //if (TargetDoor == null) gameObject.SetActive(false);
 
     }
 
@@ -25,7 +25,7 @@ public class DoorBehaviour : RoomObject
 
         if (locked)
         {
-            GetComponent<Renderer>().material.color = Color.black;
+            GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f);
         }
         else
         {
@@ -43,7 +43,7 @@ public class DoorBehaviour : RoomObject
         Camera.main.GetComponent<CameraBehaviour>().targetRoom = TargetDoor.transform.parent;
     }
 
-    void OnDrawGizmosSelected()
+    void OnDrawGizmos()
     {
         if (!TargetDoor) return;
 

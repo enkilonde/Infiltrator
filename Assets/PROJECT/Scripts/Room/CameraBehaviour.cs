@@ -18,6 +18,7 @@ public class CameraBehaviour : BaseObject
 
     void LookRoom()
     {
+        if(targetRoom)
         transform.position = targetRoom.position + cameraOffset;
     }
 

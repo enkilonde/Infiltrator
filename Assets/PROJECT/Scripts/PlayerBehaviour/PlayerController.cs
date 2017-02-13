@@ -25,17 +25,21 @@ public class PlayerController : BaseObject
     protected override void OnLoadEnded()
     {
         base.OnLoadEnded();
-
-        SpriteType[,] rawValidPos = FindObjectOfType<RenderRoom>().room.getRoomMatrix();
-        validpositions = new bool[rawValidPos.GetLength(0), rawValidPos.GetLength(1)];
-        for (int i = 0; i < rawValidPos.GetLength(0); i++)
+        if(useGenerationToBlock)
         {
-            for (int j = 0; j < rawValidPos.GetLength(1); j++)
+            SpriteType[,] rawValidPos = FindObjectOfType<RenderRoom>().room.getRoomMatrix();
+            validpositions = new bool[rawValidPos.GetLength(0), rawValidPos.GetLength(1)];
+            for (int i = 0; i < rawValidPos.GetLength(0); i++)
             {
-                validpositions[i, j] = rawValidPos[i, j] != SpriteType.ROCK;
-                //Debug.Log("Case (" + i + ", " + j + ") : " + rawValidPos[i, j] + "    Case (" + i + ", " + j + ") : " + validpositions[i, j]);
+                for (int j = 0; j < rawValidPos.GetLength(1); j++)
+                {
+                    validpositions[i, j] = rawValidPos[i, j] != SpriteType.ROCK;
+                    //Debug.Log("Case (" + i + ", " + j + ") : " + rawValidPos[i, j] + "    Case (" + i + ", " + j + ") : " + validpositions[i, j]);
+                }
             }
         }
+
+
 
     }
 
@@ -43,7 +47,8 @@ public class PlayerController : BaseObject
     {
         base.BaseUpdate();
 
-        MovePlayer2();
+        if (useGenerationToBlock) MovePlayer2();
+        else MovePlayer();
 
         PlayerLookAt();
 
@@ -70,6 +75,7 @@ public class PlayerController : BaseObject
 
     void MovePlayer2()
     {
+        print("ttt");
 
         Vector3 direction = Vector3.zero;
 

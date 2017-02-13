@@ -205,7 +205,7 @@ public class Map : BaseObject {
 
                     if (a == 4)
                     {
-                        Debug.Log("Exception");
+                        //Debug.Log("Exception");
                         return lvl1;
                     }
                     //ar = randnb[l][a] - 49;
@@ -511,46 +511,48 @@ public class Map : BaseObject {
 
         return map;
 
-    }
+    } //plus utilisé
     
     public Room[] generateMap(RT[] lvl)
     {
         Room[] map = new Room[lvl.Length];
 
         List<List<Vector2>> temp = new List<List<Vector2>>();
+        List<List<int>> tempTarget = new List<List<int>>();
 
         for (int i = 0; i < lvl.Length; i++) // Création d'une Room
         {
             RT currentRoom = lvl[i];
             temp.Add(new List<Vector2>());
+            tempTarget.Add(new List<int>());
 
             for (int j = 0; j < currentRoom.connect.Length; j++) // Génération du tableau de vector2 indiquant l'emplacement des portes
             {
                 int connect = currentRoom.connect[j];
                 if (connect == -1) continue;
+                if (connect >= i) continue;
+                tempTarget[i].Add(connect);
+                tempTarget[connect].Add(i);
+
                 int randomPos;
                 switch (j)
                 {
                     case 0: // droite
-                        if (connect >= i) break;
                         randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
                         temp[i].Add(new Vector2(0, randomPos));
                         temp[connect].Add(new Vector2(ProceduralValues.roomWidth - 1, randomPos));
                         break;
                     case 1: // haut
-                        if (connect >= i) break;
                         randomPos = Random.Range(1, ProceduralValues.roomWidth - 1);
                         temp[i].Add(new Vector2(randomPos, 0));
                         temp[connect].Add(new Vector2(randomPos, ProceduralValues.roomHeight - 1));
                         break;
                     case 2: // bas
-                        if (connect >= i) break;
                         randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
                         temp[i].Add(new Vector2(randomPos, ProceduralValues.roomHeight - 1));
                         temp[connect].Add(new Vector2(randomPos, 0));
                         break;
                     case 3: // gauche
-                        if (connect >= i) break;
                         randomPos = Random.Range(1, ProceduralValues.roomHeight - 1);
                         temp[i].Add(new Vector2(ProceduralValues.roomWidth - 1, randomPos));
                         temp[connect].Add(new Vector2(0, randomPos));
@@ -563,7 +565,15 @@ public class Map : BaseObject {
         for (int i = 0; i < lvl.Length; i++)
         {
             Vector2[] doors = temp[i].ToArray();
-            map[i] = new Room(ref doors, RoomType.NORMAL);
+            int[] doorsTargets = tempTarget[i].ToArray();
+            RoomType type = RoomType.NORMAL;
+            if (i == 0)
+            {
+                type = RoomType.EMPTY;
+            }
+            //Debug.Log(i + " : " + doorsTargets.Length);
+
+            map[i] = new Room(ref doors, ref doorsTargets, type);
         }
 
 
@@ -622,7 +632,7 @@ public class Map : BaseObject {
             resultat = prim(graph, n, ref o);
             fullmap = map(resultat, n,o);
                                               // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
-            Debug.Log("False");
+            //Debug.Log("False");
 
         }
 

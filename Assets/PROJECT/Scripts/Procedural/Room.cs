@@ -19,6 +19,12 @@ public class Room{
     [SerializeField] private Vector2 [] doors;
     private Vector2 [,] generationArray;
 
+
+    //Ajouté par Enki
+    public GameObject gameobject;
+    public int roomIndex;
+    [SerializeField] private int[] doorsTargets;
+
     //constructors
     public Room()
     {
@@ -31,6 +37,7 @@ public class Room{
             roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
             this.doors = new Vector2[doors.Length];
             this.doors = doors;
+
             CreateEmptyRoom();
             if(roomType == RoomType.TREASURE)
             {
@@ -56,6 +63,45 @@ public class Room{
             cutRoomInRect();
         }
     }
+    public Room(ref Vector2[] doors, ref int[] doorsTarget, RoomType roomType = RoomType.EMPTY)
+    {
+        if (roomType == RoomType.EMPTY || roomType == RoomType.TREASURE)
+        {
+            roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
+            this.doors = new Vector2[doors.Length];
+            this.doors = doors;
+
+
+            CreateEmptyRoom();
+            if (roomType == RoomType.TREASURE)
+            {
+                Rect temp = new Rect(new Vector2(-1 + (ProceduralValues.roomWidth / 2), -1 + (ProceduralValues.roomHeight / 2)), new Vector2(2, 2));
+                listRect.Add(temp);
+            }
+        }
+        else
+        {
+            nbDoor = doors.Length;
+            nbPointPerDoor = 2 + (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+            nbPointInRoom = nbDoor * nbPointPerDoor;
+            nbTrianglePerDoor = (int)(System.Math.Pow(2, ProceduralValues.roomNbIteration) - 1);
+            this.roomType = roomType;
+
+            generationArray = new Vector2[nbDoor + ProceduralValues.nbMidPoint - 1, nbPointInRoom];
+            roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
+            this.doors = new Vector2[doors.Length];
+            this.doors = doors;
+
+            GenerateRoom();
+            CreateRoom();
+            cutRoomInRect();
+        }
+
+        this.doorsTargets = new int[doorsTarget.Length];
+        this.doorsTargets = doorsTarget;
+
+    }
+
 
     //accessors
     public SpriteType [,] getRoomMatrix()
@@ -69,6 +115,10 @@ public class Room{
     public Vector2[] getVectorDoor()
     {
         return doors;
+    }
+    public int[] getDoorstargets()
+    {
+        return doorsTargets;
     }
 
     //methodes
