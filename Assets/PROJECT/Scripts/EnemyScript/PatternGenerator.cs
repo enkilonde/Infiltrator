@@ -44,6 +44,7 @@ public class PatternGenerator : BaseObject
         public void PatLoop1()
         {
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 0));
+            Debug.Log("PatLoop1");
         }
 
         public void PatLook1()
@@ -55,12 +56,14 @@ public class PatternGenerator : BaseObject
         {
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 0));
             PatLook1();
+            Debug.Log("PatLoop1Look1");
         }
 
         public void PatLoop2()
         {
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 0));
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 2));
+            Debug.Log("PatLoop2");
         }
 
         public void PatLoop2Look1()
@@ -68,6 +71,7 @@ public class PatternGenerator : BaseObject
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 0));
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 2));
             PatLook1();
+            Debug.Log("PatLoop2Look1");
         }
 
         public void PatPatrol1Mid()
@@ -80,32 +84,37 @@ public class PatternGenerator : BaseObject
             {
                 Enemies.Add(new EnemyConfig(2, 1, sizeY, sizeX/2, 0, 0));
             }
+            Debug.Log("PatPatrol1Mid");
         }
 
         public void PatPatrol2H()
         {
             Enemies.Add(new EnemyConfig(2, sizeX, 1, 0, 0, 0));
-            Enemies.Add(new EnemyConfig(2, sizeX, 1, 0, sizeY - 1, 0));
+            Enemies.Add(new EnemyConfig(2, sizeX, 1, 0, sizeY - 1, 1));
+            Debug.Log("PatPatrol2H");
         }
 
         public void PatPatrol2HLook1()
         {
             Enemies.Add(new EnemyConfig(2, sizeX, 1, 0, 0, 0));
-            Enemies.Add(new EnemyConfig(2, sizeX, 1, 0, sizeY - 1, 0));
+            Enemies.Add(new EnemyConfig(2, sizeX, 1, 0, sizeY - 1, 1));
             PatLook1();
+            Debug.Log("PatPatrol2HLook1");
         }
 
         public void PatPatrol2V()
         {
             Enemies.Add(new EnemyConfig(2, 1, sizeY, 0, 0, 0));
-            Enemies.Add(new EnemyConfig(2, 1, sizeY, sizeX - 1, 0, 0));
+            Enemies.Add(new EnemyConfig(2, 1, sizeY, sizeX - 1, 0, 1));
+            Debug.Log("PatPatrol2V");
         }
 
         public void PatPatrol2VLook1()
         {
             Enemies.Add(new EnemyConfig(2, 1, sizeY, 0, 0, 0));
-            Enemies.Add(new EnemyConfig(2, 1, sizeY, sizeX - 1, 0, 0));
+            Enemies.Add(new EnemyConfig(2, 1, sizeY, sizeX - 1, 0, 1));
             PatLook1();
+            Debug.Log("PatPatrol2VLook1");
         }
 
         public void PatPatrol4()
@@ -114,6 +123,7 @@ public class PatternGenerator : BaseObject
             Enemies.Add(new EnemyConfig(2, sizeX-1, 1, 1, sizeY - 1, 1));
             Enemies.Add(new EnemyConfig(2, 1, sizeY-1, 0, 1, 0));
             Enemies.Add(new EnemyConfig(2, 1, sizeY-1, sizeX - 1, 1, 1));
+            Debug.Log("PatPatrol4");
         }
 
         public void PatPatrol4Look1()
@@ -123,6 +133,7 @@ public class PatternGenerator : BaseObject
             Enemies.Add(new EnemyConfig(2, 1, sizeY - 1, 0, 1, 0));
             Enemies.Add(new EnemyConfig(2, 1, sizeY - 1, sizeX - 1, 1, 1));
             PatLook1();
+            Debug.Log("PatPatrol4Look1");
         }
 
         public void PatLoop4()
@@ -131,6 +142,7 @@ public class PatternGenerator : BaseObject
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 1));
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 2));
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 3));
+            Debug.Log("PatLoop4");
         }
 
         public void PatLoop4Look1()
@@ -140,6 +152,7 @@ public class PatternGenerator : BaseObject
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 2));
             Enemies.Add(new EnemyConfig(2, sizeX, sizeY, 0, 0, 3));
             PatLook1();
+            Debug.Log("PatLoop4Look1");
         }
 
     };
@@ -236,7 +249,7 @@ public class PatternGenerator : BaseObject
     }
 
 
-    public List<BaseEnemy> SpawnEnemies(Room room, int offsetX, int offsetY)
+    public List<BaseEnemy> SpawnEnemies(Room room, int offsetX, int offsetY, Vector3 origin)
     {
         List<BaseEnemy> TabEnemies = new List<BaseEnemy>();
         foreach(Rect rect in room.getListRect())
@@ -245,8 +258,25 @@ public class PatternGenerator : BaseObject
 
             foreach (EnemyConfig conf in RectEnnemies.Enemies)
             {
+                int px = (int)(origin.x - offsetX + (2 * offsetX - rect.x - rect.width + conf.offsetPos.x));      //(int)(rect.x + conf.offsetPos.x) - offsetX;
+                int pz = (int)(origin.y + offsetY + (- rect.y - rect.height + conf.offsetPos.y));
                 GameObject enemy = Instantiate(Resources.Load("Soldier", typeof(GameObject))) as GameObject;
-                enemy.GetComponent<Soldier>().SetPattern(conf.pattern, (int)(rect.x + conf.offsetPos.x) - offsetX, (int)(rect.y + conf.offsetPos.y) - offsetY, (int)conf.rectSize.x, (int)conf.rectSize.y, conf.progress);
+                /*
+                enemy.GetComponent<Soldier>().SetPattern(conf.pattern, 
+                    (int)(rect.x + conf.offsetPos.x) - offsetX,
+                    (int)(rect.y + conf.offsetPos.y) - offsetY,
+                    (int)conf.rectSize.x,
+                    (int)conf.rectSize.y,
+                    conf.progress);
+                 */
+                 
+                enemy.GetComponent<Soldier>().SetPattern(conf.pattern,
+                    px,
+                    pz,
+                    (int)conf.rectSize.x,
+                    (int)conf.rectSize.y,
+                    conf.progress);
+                
                 enemy.GetComponent<Soldier>().EnemyActivated();
                 TabEnemies.Add(enemy.GetComponent<BaseEnemy>());
             }

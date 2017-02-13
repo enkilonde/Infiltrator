@@ -140,7 +140,8 @@ public class BaseEnemy : BaseObject {
                 angOff = 180;
                 myPattern = PatternLoop;
                 break;
-            case 3: //LOOK      
+            case 3: //LOOK
+                transform.position = new Vector3(botLeft.x + 0.5f, 1f, botLeft.z + 0.5f);
                 transform.eulerAngles = transform.up * 90 * (prog % 4);
                 myPattern = PatternLook;
                 break;

@@ -23,7 +23,7 @@ public class RoomBehaviour : RoomObject
     {
         base.MonsterInstantiate();
         Room room = GetComponentInChildren<RenderRoom>().room;
-        Ennemys = GetComponent<PatternGenerator>().SpawnEnemies(room, ProceduralValues.roomWidth/2, ProceduralValues.roomHeight/2).ToArray();
+        Ennemys = GetComponent<PatternGenerator>().SpawnEnemies(room, ProceduralValues.roomWidth/2, ProceduralValues.roomHeight/2, transform.position).ToArray();
         
     }
 
