@@ -258,8 +258,8 @@ public class PatternGenerator : BaseObject
 
             foreach (EnemyConfig conf in RectEnnemies.Enemies)
             {
-                int px = (int)(origin.x - offsetX + (2 * offsetX - rect.x - rect.width + conf.offsetPos.x));      //(int)(rect.x + conf.offsetPos.x) - offsetX;
-                int pz = (int)(origin.y + offsetY + (- rect.y - rect.height + conf.offsetPos.y));
+                int px = (int)(origin.x - offsetX + (2 * offsetX - rect.x - rect.width + conf.offsetPos.x));
+                int pz = (int)(origin.z + offsetY + (- rect.y - rect.height + conf.offsetPos.y));
                 GameObject enemy = Instantiate(Resources.Load("Soldier", typeof(GameObject))) as GameObject;
                 /*
                 enemy.GetComponent<Soldier>().SetPattern(conf.pattern, 
