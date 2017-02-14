@@ -4,13 +4,14 @@ using System.Collections;
 
 public class BaseEnemy : BaseObject {
 
-    public enum State { DEAD, ASLEEP, LOCKED, AWAKE, SEARCHING, ALERTED };
+    public enum State { DEAD, ASLEEP, LOCKED, AWAKE, SEARCHING, ALERTED, STRANGLED };
     // DEAD = Devine !
     // ASLEEP = Endormis, se réveille avec un contact/dégât, une alerte (du bruit?)
     // LOCKED = Ne peut pas se déplacer mais peux tourner, utilisé pour les ennemis type caméra
     // AWAKE = Execute son Move()
     // SEARCHING = Lorsque le joueur à été entendu? ou brievement repéré par une caméra
     // ALERTED = Joueur répéré, sa position est connue de tous
+    // CHOKED = L'unité se fait étrangler par le joueur
 
     public enum Pattern { NONE, PATROL, LOOP, LOOK };
     // LOOK = Tourne sur lui-même
@@ -166,6 +167,38 @@ public class BaseEnemy : BaseObject {
         }
     }
 
+    public void Strangled()     //Lorsque le joueur tente d'étrangler l'ennemi
+    {
+        if(myState != State.ALERTED)
+        {
+            ChangeState(State.STRANGLED);
+        }
+    }
+
+    public void InstaKill()
+    {
+        if (myState != State.DEAD)
+        {
+            //TakeDamage(curHealth);
+            ChangeState(State.DEAD);
+        }
+    }
+
+    public void FailedStrangle()     //Lorsque le joueur rate l'étranglement
+    {
+        if (myState == State.STRANGLED)
+        {
+            ChangeState(State.ALERTED);
+            pursuit = true;     // engage la poursuite du player
+            if (inPattern)
+            {
+                posBeforeAlert = transform.position; // Définit la position à laquelle retourner après l'alerte
+                rotBeforeAlert = transform.rotation;
+            }
+            inPattern = false;
+        }
+    }
+
     public virtual void ChangeState(State st)
     {
         myState = st;
@@ -242,7 +275,10 @@ public class BaseEnemy : BaseObject {
                 }
             }  
         }
-
+        if(myState == State.DEAD)
+        {
+            gameObject.SetActive(false);
+        }
 
     }
 
