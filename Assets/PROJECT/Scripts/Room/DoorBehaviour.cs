@@ -3,15 +3,26 @@ using System.Collections;
 
 public class DoorBehaviour : RoomObject
 {
+
+    public enum doorState { OPEN, LOCKED, UNLOCKING};
+
+
     public DoorBehaviour TargetDoor;
     public int roomIndex;
     public GameObject minimapRoomObject;
-
+    public doorState state = doorState.LOCKED;
 
     public bool locked;
 
     public GameObject MinimapContainer;
 
+    Renderer rend;
+
+    protected override void FirstAwake()
+    {
+        base.FirstAwake();
+        rend = GetComponent<Renderer>();
+    }
 
     protected override void OnLoadEnded()
     {
@@ -23,12 +34,34 @@ public class DoorBehaviour : RoomObject
         minimapRoomObject = MinimapContainer.transform.GetChild(roomIndex).gameObject;
 
 
-        ToggleLock(true);
+        SetState(doorState.LOCKED);
         minimapRoomObject.SetActive(false);
 
 
         if (roomIndex == 0) UpdateMinimap(minimapRoomObject, minimapRoomObject);
 
+    }
+
+    public void SetState(doorState newState)
+    {
+        switch (newState)
+        {
+            case doorState.LOCKED:
+                ToggleLock(false);
+                break;
+
+            case doorState.OPEN:
+                ToggleLock(true);
+                break;
+
+            case doorState.UNLOCKING:
+                rend.material.color = Color.gray;
+                break;
+
+            default:
+                Debug.Log("WTF man...");
+                break;
+        }
     }
 
     public void ToggleLock(bool state, bool Secondary = false)
@@ -39,11 +72,11 @@ public class DoorBehaviour : RoomObject
 
         if (locked)
         {
-            GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f);
+            rend.material.color = new Color(0.2f, 0.2f, 0.2f);
         }
         else
         {
-            GetComponent<Renderer>().material.color = Color.white;
+            rend.material.color = Color.white;
         }
 
     }

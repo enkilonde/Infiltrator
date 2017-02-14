@@ -68,9 +68,10 @@ public class PlayerActions : BaseObject
             }
         }
 
+        if (nearestEnnemy.GetComponent<BaseEnemy>().myState == BaseEnemy.State.ALERTED) yield break;
         ChangeEnnemyColor(nearestEnnemy.gameObject, Color.gray);
-        BaseEnemy.State oldState = nearestEnnemy.GetComponent<BaseEnemy>().myState;
-        nearestEnnemy.GetComponent<BaseEnemy>().myState = BaseEnemy.State.LOCKED;
+        nearestEnnemy.GetComponent<BaseEnemy>().Strangled();
+
 
         float timer = timeToWait;
 
@@ -82,7 +83,7 @@ public class PlayerActions : BaseObject
             {
                 ChangeEnnemyColor(nearestEnnemy.gameObject, Color.white);
                 SetCompletionUI(0, false);
-                nearestEnnemy.GetComponent<BaseEnemy>().myState = oldState;
+                nearestEnnemy.GetComponent<BaseEnemy>().FailedStrangle();
                 yield break;
             }
             timer -= Time.deltaTime;
@@ -95,7 +96,7 @@ public class PlayerActions : BaseObject
     IEnumerator UnlockDoor(float timeToWait, KeyCode touche)
     {
         Collider[] doorsAround = Physics.OverlapSphere(transform.position, ActionRange, 1 << LayerMask.NameToLayer("Doors"));
-        print(doorsAround.Length);
+        //print(doorsAround.Length);
         if (doorsAround.Length == 0) yield break;
         float minDist = ActionRange + 1;
 

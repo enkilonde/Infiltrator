@@ -12,6 +12,7 @@ public class GameManager : BaseObject
         base.FirstAwake();
         mapScript = FindObjectOfType<Map>();
         if (mapScript == null) Debug.LogError("Missing 'Map' script in scene");
+        GameObject.Find("LoadingScreenCanvas").GetComponent<Canvas>().enabled = true;
 
 
 
@@ -26,5 +27,35 @@ public class GameManager : BaseObject
 
     }
 
+
+    protected override void OnLoadEndedLate()
+    {
+        base.OnLoadEndedLate();
+        StartCoroutine(waitForEndLoading());
+
+    }
+
+    IEnumerator waitForEndLoading()
+    {
+        bool ready = false;
+        while(!ready)
+        {
+            BaseObject[] allBase = FindObjectsOfType<BaseObject>();
+            for (int i = 0; i < allBase.Length; i++)
+            {
+                ready = true;
+                if (!allBase[i].loadingEnded)
+                {
+                    ready = false;
+                    break;
+                }
+            }
+            yield return null;
+        }
+
+        GameObject.Find("LoadingScreenCanvas").GetComponent<Canvas>().enabled = false;
+
+
+    }
 
 }

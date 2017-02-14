@@ -4,7 +4,7 @@ using System.Collections;
 public class BaseObject : MonoBehaviour
 {
 
-    bool loadingEnded = false;
+    [HideInInspector] public bool loadingEnded = false;
 
     void Awake()
     {
@@ -49,6 +49,9 @@ public class BaseObject : MonoBehaviour
 
         OnLoadEnded();
 
+        yield return null;
+
+        OnLoadEndedLate();
     }
 
     //C'est ici qu'on attribue les références
@@ -77,9 +80,13 @@ public class BaseObject : MonoBehaviour
 
     protected virtual void OnLoadEnded()
     {
-        loadingEnded = true;
+
     }
 
+    protected virtual void OnLoadEndedLate()
+    {
+        loadingEnded = true;
+    }
 
     void Update()
     {
