@@ -16,6 +16,8 @@ public class PlayerController : BaseObject
 
     public bool useGenerationToBlock = true;
 
+    public int currentRoom = 0;
+
     protected override void FirstAwake()
     {
         base.FirstAwake();
@@ -50,9 +52,6 @@ public class PlayerController : BaseObject
         if (useGenerationToBlock) MovePlayer2();
         else MovePlayer();
 
-        PlayerLookAt();
-
-
         posInRoom = WorldToRoomLocal(transform.position);  
 
     }
@@ -71,7 +70,6 @@ public class PlayerController : BaseObject
         if(direction.magnitude != 0) transform.LookAt(transform.position + direction.normalized);
 
     }
-
 
     void MovePlayer2()
     {
@@ -101,13 +99,6 @@ public class PlayerController : BaseObject
     }
 
 
-    void PlayerLookAt()
-    {
-        //var mousePos2D = Input.mousePosition;
-        //mousePos2D.z = Camera.main.transform.position.y;
-        //mousePos2D = Camera.main.ScreenToWorldPoint(mousePos2D);
-        //transform.LookAt(new Vector3(mousePos2D.x, transform.position.y, mousePos2D.z));
-    }
 
 
     Vector2 WorldToRoomLocal(Vector3 pos)

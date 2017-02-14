@@ -662,7 +662,7 @@ public class Map : BaseObject {
         miniCam.clearFlags = CameraClearFlags.Nothing;
 
         Minimap.transform.position = offset - new Vector3(0, 0, 10);
-        renderLink(fullmap, o, offset, Minimap);
+        //renderLink(fullmap, o, offset, Minimap);
         renderMap(fullmap, offset, Minimap);
     }
 

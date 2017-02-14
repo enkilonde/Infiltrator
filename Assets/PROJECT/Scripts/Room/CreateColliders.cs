@@ -89,6 +89,23 @@ public class CreateColliders : BaseObject
                 }
             }
         }
+
+        for (int i = -1; i < ProceduralValues.roomWidth + 1; i++)
+        {
+            Vector3 pos = new Vector3(ProceduralValues.roomWidth / 2 - 0.5f - i, ProceduralValues.MeshsHeight, ProceduralValues.roomHeight / 2 - 0.5f + 1);
+            GameObject wall = Instantiate(WallPrefab, pos, Quaternion.identity) as GameObject;
+            wall.transform.SetParent(transform);
+            GameObject wall2 = Instantiate(WallPrefab, pos - new Vector3(0, 0, ProceduralValues.roomHeight + 1), Quaternion.identity) as GameObject;
+            wall2.transform.SetParent(transform);
+        }
+        for (int i = 0; i < ProceduralValues.roomHeight; i++)
+        {
+            Vector3 pos = new Vector3(ProceduralValues.roomWidth / 2 - 0.5f + 1, ProceduralValues.MeshsHeight, ProceduralValues.roomHeight / 2 - 0.5f - i);
+            GameObject wall = Instantiate(WallPrefab, pos, Quaternion.identity) as GameObject;
+            wall.transform.SetParent(transform);
+            GameObject wall2 = Instantiate(WallPrefab, pos - new Vector3(ProceduralValues.roomWidth + 1, 0, 0), Quaternion.identity) as GameObject;
+            wall2.transform.SetParent(transform);
+        }
         CombineChildren();
 
     }

@@ -69,6 +69,8 @@ public class PlayerActions : BaseObject
         }
 
         ChangeEnnemyColor(nearestEnnemy.gameObject, Color.gray);
+        BaseEnemy.State oldState = nearestEnnemy.GetComponent<BaseEnemy>().myState;
+        nearestEnnemy.GetComponent<BaseEnemy>().myState = BaseEnemy.State.LOCKED;
 
         float timer = timeToWait;
 
@@ -80,6 +82,7 @@ public class PlayerActions : BaseObject
             {
                 ChangeEnnemyColor(nearestEnnemy.gameObject, Color.white);
                 SetCompletionUI(0, false);
+                nearestEnnemy.GetComponent<BaseEnemy>().myState = oldState;
                 yield break;
             }
             timer -= Time.deltaTime;
