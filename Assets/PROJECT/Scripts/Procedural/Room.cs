@@ -60,7 +60,9 @@ public class Room{
 
             GenerateRoom();
             CreateRoom();
+            PlaceArroundDoor(SpriteType.ROCK);
             cutRoomInRect();
+            PlaceArroundDoor(SpriteType.GROUND);
         }
     }
     public Room(ref Vector2[] doors, ref int[] doorsTarget, RoomType roomType = RoomType.EMPTY)
@@ -94,7 +96,9 @@ public class Room{
 
             GenerateRoom();
             CreateRoom();
+            PlaceArroundDoor(SpriteType.ROCK);
             cutRoomInRect();
+            PlaceArroundDoor(SpriteType.GROUND);
         }
 
         this.doorsTargets = new int[doorsTarget.Length];
@@ -172,7 +176,6 @@ public class Room{
             for (int j = 0; j < ProceduralValues.roomHeight; j++)
             {
                 roomMatrix[i, j] = SpriteType.ROCK;
-                //roomMatrix[i, j] = SpriteType.ROCK;
             }
         }
 
@@ -268,6 +271,43 @@ public class Room{
             {
                 generationArray[nbDoor+midCpt, copyCpt] = element;
                 copyCpt++;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// place st arround door looking to offsetArroundDoor in proceduralValues
+    /// </summary>
+    /// <param name="st"></param>
+    public void PlaceArroundDoor(SpriteType st)
+    {
+        for (int i = 0; i < doors.Length; i++)
+        {
+            for (int offsetX = -ProceduralValues.offsetArroundDoor; offsetX <= ProceduralValues.offsetArroundDoor; offsetX++)
+            {
+                for (int offsetY = -ProceduralValues.offsetArroundDoor; offsetY <= ProceduralValues.offsetArroundDoor; offsetY++)
+                {
+                    int x = (int)doors[i].x + offsetX;
+                    if (x < 0)
+                    {
+                        x = 0;
+                    }
+                    else if (x >= ProceduralValues.roomWidth)
+                    {
+                        x = ProceduralValues.roomWidth - 1;
+                    }
+                    int y = (int)doors[i].y + offsetY;
+                    if (y < 0)
+                    {
+                        y = 0;
+                    }
+                    else if (y >= ProceduralValues.roomHeight)
+                    {
+                        y = ProceduralValues.roomHeight - 1;
+                    }
+                    roomMatrix[x, y] = st;
+                }
             }
         }
     }

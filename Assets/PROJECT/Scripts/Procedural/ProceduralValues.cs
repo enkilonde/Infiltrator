@@ -11,14 +11,16 @@ public class ProceduralValues
     public static int roomWidth = 32;
     public static int roomHeight = 32;
     //number of iteraction in the procedural algorith
-    public static int roomNbIteration = 4;
+    public static int roomNbIteration = 3;
     //offset randomly apply to each point create by the room algorithm
-    public static float roomMaxRandomDistanceRange = 2f;
-    public static float roomMinRandomDistanceRange = 1f;
+    public static float roomMaxRandomDistanceRange = System.Math.Max(roomWidth, roomHeight) / 4;
+    public static float roomMinRandomDistanceRange = System.Math.Max(roomWidth, roomHeight) / 8;
     //nb random point to create in the room
     public static int nbMidPoint = 6;
     //minimum area of rectangle for ennemis pattern
-    public static int ennemisMinArea = 20;
+    public static int ennemisMinArea = 30;
+    //offset of empty space arround doors
+    public static int offsetArroundDoor = 5;
 
     //Enemy procedural values
     public static float enemyMaxHealth = 100f;
