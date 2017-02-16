@@ -12,12 +12,12 @@ public class RoomBehaviour : RoomObject
     protected override void FirstAwake()
     {
         base.FirstAwake();
-        InitRoom();
     }
 
     protected override void OnLoadEnded()
     {
         base.OnLoadEnded();
+        InitRoom();
 
     }
 

@@ -659,7 +659,8 @@ public class Map : BaseObject {
         miniCam.orthographic = true;
         miniCam.orthographicSize = 15;
         miniCam.rect = new Rect(0.75f, 0.75f, 0.25f, 0.25f);
-        miniCam.clearFlags = CameraClearFlags.Nothing;
+        miniCam.clearFlags = CameraClearFlags.SolidColor;
+        miniCam.backgroundColor = new Color(0.1f, 0.1f, 0.1f, 1);
 
         Minimap.transform.position = offset - new Vector3(0, 0, 10);
         //renderLink(fullmap, o, offset, Minimap);
