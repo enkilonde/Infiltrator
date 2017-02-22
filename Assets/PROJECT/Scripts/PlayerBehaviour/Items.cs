@@ -2,15 +2,26 @@
 using System.Collections;
 using System;
 
-public enum ITEM_LIST {DebugItem };
+public enum ITEM_LIST {DebugItem, MushroomBoost};
 
 public class ItemsUtility
 {
     public static Item GetItemFromEnum(ITEM_LIST enumElement)
     {
-        return (Item)Activator.CreateInstance(Type.GetType("DebugItem"));
+        return (Item)Activator.CreateInstance(Type.GetType(enumElement.ToString()));
     }
 
+    public static Item GetRandomItem()
+    {
+        return (GetItemFromEnum(GetRandomEnum<ITEM_LIST>()));
+    }
+
+    static T GetRandomEnum<T>()
+    {
+        System.Array A = System.Enum.GetValues(typeof(T));
+        T V = (T)A.GetValue(UnityEngine.Random.Range(0, A.Length));
+        return V;
+    }
 
 }
 
@@ -19,7 +30,6 @@ public class ItemsUtility
 public class Item
 {
     public string name;
-    public Texture2D apparence;
     public bool activeItem;
 
     public Item() { Initialise(); } // Constructor
@@ -59,3 +69,18 @@ class DebugItem : Item
 
 }
 
+class MushroomBoost : Item
+{
+    public override void Initialise()
+    {
+        base.Initialise();
+        name = "Fungal Boost";
+        activeItem = false;
+    }
+
+    public override void PickupItem()
+    {
+        base.PickupItem();
+        PlayerProperties.playerWalkSpeed += 3;
+    }
+}

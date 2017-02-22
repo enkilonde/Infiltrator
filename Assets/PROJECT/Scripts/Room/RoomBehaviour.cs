@@ -39,7 +39,7 @@ public class RoomBehaviour : RoomObject
     {
         for (int i = 0; i < doors.Length; i++)
         {
-            doors[i].ToggleLock(false);
+            doors[i].SetState(DoorBehaviour.doorState.OPEN);
         }
     }
 }

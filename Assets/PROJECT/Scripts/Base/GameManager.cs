@@ -7,9 +7,13 @@ public class GameManager : BaseObject
     private Map mapScript;
 
 
+
     protected override void FirstAwake()
     {
         base.FirstAwake();
+
+        DontDestroyOnLoad(gameObject);
+
         mapScript = FindObjectOfType<Map>();
         if (mapScript == null) Debug.LogError("Missing 'Map' script in scene");
         GameObject.Find("LoadingScreenCanvas").GetComponent<Canvas>().enabled = true;

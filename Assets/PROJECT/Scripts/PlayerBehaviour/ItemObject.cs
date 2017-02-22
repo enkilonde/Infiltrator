@@ -10,6 +10,13 @@ public class ItemObject : BaseObject
     {
         base.SecondAwake();
         actualItem = ItemsUtility.GetItemFromEnum(item);
+        Sprite S = Resources.Load<Sprite>("Items/Sprites/" + actualItem.name);
+        GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Items/Sprites/" + actualItem.name);
+        Rect spriteSize = GetComponent<SpriteRenderer>().sprite.rect;
+
+        //transform.localScale = new Vector3(25/spriteSize.width, 25/spriteSize.height, 1);
+
+        transform.Rotate(90, 0, 0);
     }
 
 

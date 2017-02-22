@@ -6,15 +6,19 @@ public class PlayerActions : BaseObject
 {
     private Inventory inventory;
     private Image completionImage;
+    private PlayerController controller;
 
-    public float ActionRange = 4;
+    float ActionRange;
+
+    float smotherTime;
+    float unlockTime;
 
 
     protected override void FirstAwake()
     {
         base.FirstAwake();
         inventory = GetComponent<Inventory>();
-        //completionImage = GameObject.Find("CompletionImage").GetComponent<Image>();
+        controller = GetComponent<PlayerController>();
     }
 
     protected override void SecondAwake()
@@ -24,6 +28,11 @@ public class PlayerActions : BaseObject
         GameObject PersonalCanvas = Instantiate<GameObject>(Resources.Load<GameObject>("PlayerCanvas"));
         PersonalCanvas.GetComponent<FollowTarget>().targetToFollow = transform;
         completionImage = PersonalCanvas.transform.GetChild(0).GetComponent<Image>();
+
+        smotherTime = PlayerProperties.smotherSpeed;
+        unlockTime = PlayerProperties.unlockSpeed;
+        ActionRange = PlayerProperties.actionRange;
+
     }
 
     protected override void BaseUpdate()
@@ -53,7 +62,11 @@ public class PlayerActions : BaseObject
     IEnumerator SmotherEnnemy(float timeToWait, KeyCode touche)
     {
         Collider[] ennemysAround = Physics.OverlapSphere(transform.position, ActionRange, 1 << LayerMask.NameToLayer("Ennemy"));
-        if (ennemysAround.Length == 0) yield break;
+        if (ennemysAround.Length == 0)
+        {
+            ShowRange(ActionRange);
+            yield break;
+        }
         float minDist = ActionRange + 1;
 
         Transform nearestEnnemy = null;
@@ -72,6 +85,7 @@ public class PlayerActions : BaseObject
         ChangeEnnemyColor(nearestEnnemy.gameObject, Color.gray);
         nearestEnnemy.GetComponent<BaseEnemy>().Strangled();
 
+        controller.canMove = false;
 
         float timer = timeToWait;
 
@@ -81,26 +95,29 @@ public class PlayerActions : BaseObject
             SetCompletionUI(timer / timeToWait);
             if (!Input.GetKey(touche))
             {
-                ChangeEnnemyColor(nearestEnnemy.gameObject, Color.white);
-                SetCompletionUI(0, false);
+                EndAction();
+                ChangeEnnemyColor(nearestEnnemy.gameObject, Color.red);
                 nearestEnnemy.GetComponent<BaseEnemy>().FailedStrangle();
                 yield break;
             }
             timer -= Time.deltaTime;
         }
-        SetCompletionUI(0, false);
-
+        EndAction();
         Destroy(nearestEnnemy.gameObject);
     }
 
     IEnumerator UnlockDoor(float timeToWait, KeyCode touche)
     {
         Collider[] doorsAround = Physics.OverlapSphere(transform.position, ActionRange, 1 << LayerMask.NameToLayer("Doors"));
-        //print(doorsAround.Length);
-        if (doorsAround.Length == 0) yield break;
+
+        if (doorsAround.Length == 0)
+        {
+            ShowRange(ActionRange);
+            yield break;
+        }
         float minDist = ActionRange + 1;
 
-        Transform nearesDoor = null;
+        Transform nearestDoor = null;
 
         for (int i = 0; i < doorsAround.Length; i++)
         {
@@ -108,11 +125,14 @@ public class PlayerActions : BaseObject
             if (dist < minDist)
             {
                 minDist = dist;
-                nearesDoor = doorsAround[i].transform;
+                nearestDoor = doorsAround[i].transform;
             }
         }
 
-        ChangeEnnemyColor(nearesDoor.gameObject, Color.gray);
+        controller.canMove = false;
+
+        nearestDoor.GetComponent<DoorBehaviour>().SetState(DoorBehaviour.doorState.UNLOCKING);
+
 
         float timer = timeToWait;
 
@@ -122,15 +142,14 @@ public class PlayerActions : BaseObject
             SetCompletionUI(timer / timeToWait);
             if (!Input.GetKey(touche))
             {
-                ChangeEnnemyColor(nearesDoor.gameObject, Color.white);
-                SetCompletionUI(0, false);
+                nearestDoor.GetComponent<DoorBehaviour>().SetState(DoorBehaviour.doorState.LOCKED);
+                EndAction();
                 yield break;
             }
             timer -= Time.deltaTime;
         }
-        SetCompletionUI(0, false);
-
-        nearesDoor.GetComponent<DoorBehaviour>().ToggleLock(false);
+        EndAction();
+        nearestDoor.GetComponent<DoorBehaviour>().SetState(DoorBehaviour.doorState.OPEN);
     }
 
     void ChangeEnnemyColor(GameObject ennemy, Color color)
@@ -138,6 +157,12 @@ public class PlayerActions : BaseObject
 
         ennemy.transform.GetComponentInChildren<Renderer>().material.color = color;
 
+    }
+
+    void EndAction(bool suceed = true)
+    {
+        SetCompletionUI(0, false);
+        controller.canMove = true;
     }
 
     void SetCompletionUI(float value, bool activated = true)
@@ -174,6 +199,17 @@ public class PlayerActions : BaseObject
     void ActivateItem()
     {
         inventory.ActivateSelectedItem();
+    }
+
+    void ShowRange(float range)
+    {
+        ParticleSystem part;
+        GameObject partObj = Instantiate(Resources.Load<GameObject>("RangeShow"), transform.position, Quaternion.identity) as GameObject;
+        partObj.transform.Rotate(-90, 0, 0);
+        part = partObj.GetComponent<ParticleSystem>();
+        part.startSpeed = range / part.startLifetime;
+        part.Play();
+        Destroy(part.gameObject, part.startLifetime);
     }
 
 }

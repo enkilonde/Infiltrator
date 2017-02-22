@@ -41,7 +41,6 @@ public class DoorBehaviour : RoomObject
 
 
 
-
     }
 
     protected override void OnLoadEndedLate()
@@ -59,11 +58,11 @@ public class DoorBehaviour : RoomObject
         switch (newState)
         {
             case doorState.LOCKED:
-                ToggleLock(false);
+                ToggleLock(true);
                 break;
 
             case doorState.OPEN:
-                ToggleLock(true);
+                ToggleLock(false);
                 break;
 
             case doorState.UNLOCKING:
@@ -90,7 +89,7 @@ public class DoorBehaviour : RoomObject
         {
             rend.material.color = Color.white;
         }
-
+        GetComponent<Collider>().isTrigger = !state;
     }
 
     void OnTriggerEnter(Collider coll)

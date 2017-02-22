@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenuBehaviour : BaseObject
 {
@@ -8,6 +9,12 @@ public class PauseMenuBehaviour : BaseObject
     public bool paused = false;
     public static PauseMenuBehaviour pauseBh;
     Canvas pauseCanvas;
+
+    //PlayerStats
+    Text walkSpeedTxt;
+    Text killSpeedtxt;
+    Text unlockSpeedTxt;
+    Text actionRangeTxt;
 
 
     protected override void FirstAwake()
@@ -18,6 +25,10 @@ public class PauseMenuBehaviour : BaseObject
         else Destroy(this);
 
         pauseCanvas = GetComponent<Canvas>();
+        walkSpeedTxt = pauseCanvas.transform.Find("WalkSpeed").GetComponent<Text>();
+        killSpeedtxt = pauseCanvas.transform.Find("KillSpeed").GetComponent<Text>();
+        unlockSpeedTxt = pauseCanvas.transform.Find("UnlockSpeed").GetComponent<Text>();
+        actionRangeTxt = pauseCanvas.transform.Find("ActionRange").GetComponent<Text>();
 
     }
 
@@ -36,8 +47,6 @@ public class PauseMenuBehaviour : BaseObject
         {
             TogglePause(paused);
         }
-
-
     }
 
     void TogglePause(bool state)
@@ -51,9 +60,9 @@ public class PauseMenuBehaviour : BaseObject
         {
             paused = true;
             pauseCanvas.enabled = true;
+            UpdatePlayerStatDisplay();
         }
     }
-
 
     public void Resume()
     {
@@ -70,10 +79,18 @@ public class PauseMenuBehaviour : BaseObject
         Application.Quit();
     }
 
-
     void OnDestroy()
     {
         pauseBh = null;
+    }
+
+    void UpdatePlayerStatDisplay()
+    {
+        walkSpeedTxt.text = "Walk speed : " + PlayerProperties.playerWalkSpeed + "m/s";
+        killSpeedtxt.text = "Kill speed : " + PlayerProperties.smotherSpeed + "s";
+        unlockSpeedTxt.text = "Unlock speed : " + PlayerProperties.unlockSpeed + "s";
+        actionRangeTxt.text = "Action Range : " + PlayerProperties.actionRange + "m";
+
     }
 
 }
