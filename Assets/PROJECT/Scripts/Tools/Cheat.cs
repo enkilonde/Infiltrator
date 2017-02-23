@@ -11,8 +11,8 @@ public class Cheat : BaseObject
         if (Input.GetKeyDown(KeyCode.F1))
         {
             GameObject item = Instantiate<GameObject>(Resources.Load<GameObject>("Items/GenericItem"));
-            item.transform.position = GameObject.FindGameObjectWithTag("Player").transform.position;
-            //item.GetComponent<ItemObject>().item = ItemsUtility.GetRandomItem();
+            item.transform.position = GameObject.FindGameObjectWithTag("Player").transform.position + new Vector3(0, 0, 3);
+            item.GetComponent<ItemObject>().item = ItemsUtility.GetRandomEnum<ITEM_LIST>();
         }
 
 

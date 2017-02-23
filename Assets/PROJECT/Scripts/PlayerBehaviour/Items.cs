@@ -2,7 +2,21 @@
 using System.Collections;
 using System;
 
-public enum ITEM_LIST {DebugItem, MushroomBoost};
+public enum ITEM_LIST // Ajoutez le nom d'un item dans cet enum quand vous le créez
+{
+    DebugItem,
+
+    //Passive Items
+    MushroomBoost,
+
+    //Active items
+    Dash
+}; 
+
+
+
+
+
 
 public class ItemsUtility
 {
@@ -16,7 +30,7 @@ public class ItemsUtility
         return (GetItemFromEnum(GetRandomEnum<ITEM_LIST>()));
     }
 
-    static T GetRandomEnum<T>()
+    public static T GetRandomEnum<T>()
     {
         System.Array A = System.Enum.GetValues(typeof(T));
         T V = (T)A.GetValue(UnityEngine.Random.Range(0, A.Length));
@@ -29,18 +43,38 @@ public class ItemsUtility
 [System.Serializable]
 public class Item
 {
-    public string name;
-    public bool activeItem;
+    public string name; 
+    public Sprite sprite;
 
+    //ActiveItem Variables
+    public bool activeItem;
+    public float reloadTime = 2;
+    public float reloadRemaining = 0;
+    public bool itemReady = true;
+
+
+    //Méthodes
     public Item() { Initialise(); } // Constructor
 
     public virtual void Initialise() { } // Fonction appelé quand l'objet est créée.
 
-    public virtual void UseItem() { } // Fonction appelé quand l'objet est utilisé.
+    public virtual void UseItem(Transform playertransform) {EventHandler.Instance.StartCoroutine(ReloadItem()); } // Fonction appelé quand l'objet est utilisé.
 
-    public virtual void PickupItem() // Fonction appelée quand le joueur ramasse l'objet.
+    public virtual void UseItem() { EventHandler.Instance.StartCoroutine(ReloadItem()); } // Fonction appelé quand l'objet est utilisé.
+
+    public virtual void PickupItem(){} // Fonction appelée quand le joueur ramasse l'objet. 
+
+    IEnumerator ReloadItem()
     {
-        if (!activeItem) UseItem();
+        reloadRemaining = reloadTime;
+        itemReady = false;
+        while(reloadRemaining > 0)
+        {
+            yield return null;
+            reloadRemaining -= Time.deltaTime;
+        }
+        reloadRemaining = 0;
+        itemReady = true;
     }
 }
 
@@ -69,6 +103,7 @@ class DebugItem : Item
 
 }
 
+#region Passive Items
 class MushroomBoost : Item
 {
     public override void Initialise()
@@ -81,6 +116,30 @@ class MushroomBoost : Item
     public override void PickupItem()
     {
         base.PickupItem();
-        PlayerProperties.playerWalkSpeed += 3;
+        PlayerProperties.playerWalkSpeed += 5;
     }
 }
+
+#endregion
+
+
+#region Active Items
+
+class Dash : Item
+{
+    public override void Initialise()
+    {
+        base.Initialise();
+        name = "Dash";
+        activeItem = true;
+    }
+
+    public override void UseItem(Transform PlayerTransform)
+    {
+        base.UseItem();
+        PlayerTransform.GetComponent<Rigidbody>().AddForce(PlayerTransform.forward * 100, ForceMode.VelocityChange);
+    }
+}
+
+
+#endregion

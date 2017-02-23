@@ -44,6 +44,9 @@ public class PlayerActions : BaseObject
 
         if (Input.GetKeyDown(KeyCode.Space)) ActivateItem();
 
+        if (Input.GetKeyDown(KeyCode.A)) inventory.ChangeSelectedItem(-1);
+        if (Input.GetKeyDown(KeyCode.E)) inventory.ChangeSelectedItem(1);
+
     }
 
     IEnumerator WaitThenCallback(float timeToWait, KeyCode touche, System.Action callback = null)
