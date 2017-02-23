@@ -500,7 +500,7 @@ public class Map : BaseObject {
                 }
             }
 
-           
+            ProceduralValues.ApplyRandomSetup();
             map[i] = new Room(ref tmp,RoomType.NORMAL);
 
             

@@ -45,6 +45,12 @@ public class ProceduralValues
         roomHeight = height;
     }
 
+    public static void ApplyRandomSetup()
+    {
+        ApplySetup(Random.Range(0, 4) + 10 * Random.Range(0, 5) + 100 * Random.Range(0, 3));
+    }
+
+
     /// <summary>
     /// 0->3 change roomNbIteration + 10 change nbMidPoint + 100 change randomDistance
     /// </summary>
