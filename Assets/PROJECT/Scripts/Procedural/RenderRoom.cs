@@ -109,7 +109,7 @@ public class RenderRoom : BaseObject {
                         texture.SetPixel(x, y, Color.white);
                         break;
                     case SpriteType.DOOR:
-                        texture.SetPixel(x, y, Color.red);
+                        texture.SetPixel(x, y, Color.black);
                         break;
                     case SpriteType.ROCK:
                         texture.SetPixel(x, y, Color.blue);

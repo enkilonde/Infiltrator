@@ -18,7 +18,7 @@ public class Room{
     private List<Rect> listRect = new List<Rect>();
     [SerializeField] private Vector2 [] doors;
     private Vector2 [,] generationArray;
-
+    [SerializeField] private Vector2 exitButton;
 
     //Ajouté par Enki
     public GameObject gameobject;
@@ -64,6 +64,7 @@ public class Room{
             cutRoomInRect();
             PlaceArroundDoor(SpriteType.GROUND);
         }
+        placeButton();
     }
     public Room(ref Vector2[] doors, ref int[] doorsTarget, RoomType roomType = RoomType.EMPTY)
     {
@@ -103,7 +104,7 @@ public class Room{
 
         this.doorsTargets = new int[doorsTarget.Length];
         this.doorsTargets = doorsTarget;
-
+        placeButton();
     }
 
 
@@ -578,5 +579,32 @@ public class Room{
         return maxArea;
     }
 
+
+    public void placeButton()
+    {
+        Vector2 mem = new Vector2(0,0);
+        for(int i = 0; i<ProceduralValues.roomWidth; i++)
+        {
+            for (int j = 0; j < ProceduralValues.roomHeight; j++)
+            {
+                if(roomMatrix[i,j] == SpriteType.GROUND)
+                {
+                    //si (i,j) plus proche du centre que (memX, memY)
+                    if((Math.Abs(i - (ProceduralValues.roomWidth / 2)) + Math.Abs(j - (ProceduralValues.roomHeight / 2)))
+                        < (Math.Abs(mem.x - (ProceduralValues.roomWidth / 2)) + Math.Abs(mem.y - (ProceduralValues.roomHeight / 2))))
+                    {
+                        mem.x = i;
+                        mem.y = j;
+                    }
+                }
+            }
+        }
+        exitButton = new Vector2(mem.x, mem.y);
+    }
+
+    public Vector2 getButton()
+    {
+        return exitButton;
+    }
 
 }
