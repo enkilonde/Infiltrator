@@ -4,7 +4,8 @@ using System.Collections;
 
 public class BaseEnemy : BaseObject {
 
-    public enum State { DEAD, ASLEEP, LOCKED, AWAKE, SEARCHING, ALERTED, STRANGLED };
+    public enum State { DEAD = 0, ASLEEP = 1, LOCKED = 2, AWAKE = 3, SEARCHING = 4, ALERTED = 5, STRANGLED = 6 };
+
     // DEAD = Devine !
     // ASLEEP = Endormis, se réveille avec un contact/dégât, une alerte (du bruit?)
     // LOCKED = Ne peut pas se déplacer mais peux tourner, utilisé pour les ennemis type caméra
@@ -19,13 +20,21 @@ public class BaseEnemy : BaseObject {
     // PATROL = Vas et Vien entre deux points
     // NONE = Immobile
 
+
+    private Color[] colorState; // Tableau des couleurs associées aux States
+    private Material myMaterial;
+
     public GameObject player;
 
     private Vector3 posBeforeAlert; // Position sauvegardé au moment de l'alerte
     private Quaternion rotBeforeAlert; // Position sauvegardé au moment de l'alerte
 
-    private bool pursuit;
-    private bool inPattern;
+    private Vector3 searchArea; // position à atteindre pour la recherche
+    bool searching = false;
+
+    private bool pursuit;       // Permet de savoir si l'ennemi est en poursuite ou retourn vers le pattern
+    private bool inPattern;     // 
+    private float chaseTimer;
 
     private float timer = 0f;
     private bool turning = false;
@@ -56,6 +65,8 @@ public class BaseEnemy : BaseObject {
     //[SerializeField]
     private float atkRange;
 
+    private float addedViewAngle = 0;
+    private float addedViewDistance = 0;
 
     private RectTransform transformView;
     private Image imageView;
@@ -64,22 +75,26 @@ public class BaseEnemy : BaseObject {
     public virtual void Instantiated(State st, float maxH, float curH, float viewA, float viewD, float spd, float atkR)
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        ChangeState(st);
         maxHealth = maxH;
         curHealth = curH;
         viewAngle = viewA;
         viewDistance = viewD;
         speed = spd;
         atkRange = atkR;
-        InitView(viewAngle, viewD);
+        InitFunc(viewAngle, viewD);
         pursuit = false;
+        searching = false;
         inPattern = true;
         posBeforeAlert = transform.position;
+        ChangeState(st);
     }
 
-    public virtual void InitView(float viewA, float viewD)
+    public virtual void InitFunc(float viewA, float viewD)      // Initialise l'ennemi ainsi que ses variables dépendantes d'éléments hors script
     {
-        if(transformView = transform.FindChild("ViewCanvas").FindChild("DisplayView").GetComponent<RectTransform>())
+        addedViewAngle = 0;
+        addedViewDistance = 0;
+
+        if (transformView = transform.FindChild("ViewCanvas").FindChild("DisplayView").GetComponent<RectTransform>())
         {
             //transformView.eulerAngles = new Vector3(90, 0, viewA * 0.5f);
             transformView.eulerAngles = new Vector3(90, 0, -transform.eulerAngles.y + viewA * 0.5f);
@@ -98,9 +113,48 @@ public class BaseEnemy : BaseObject {
             Debug.Log("Image de la vision introuvable (situé dans le Canvas 'ViewCanvas' en enfant de l'ennemi)");
         }
 
+        colorState = new Color[7];
+        colorState[0] = new Color(0, 0, 0); // Black for DEAD
+        colorState[1] = new Color(0, 0, 1); // Blue for ASLEEP
+        colorState[2] = new Color(1, 1, 1); // White for LOCKED
+        colorState[3] = new Color(1, 1, 0); // Yellow for AWAKE
+        colorState[4] = new Color(1, 0.5f, 0); // Orange for SEARCHING
+        colorState[5] = new Color(1, 0, 0); // Red for ALERTED
+        colorState[6] = new Color(1, 0, 1); // Magenta for STRANGLED
 
+        myMaterial = GetComponent<MeshRenderer>().materials[0];
 
     }
+
+    public virtual void ChangeView(float viewA, float viewD)
+    {
+        if (transformView != null)
+        {
+            if(viewA == 0 || viewD == 0)    // Si la vision est nulle (DEAD ou ASLEEP)
+            {
+                transformView.gameObject.SetActive(false);
+            }
+            else
+            {
+                transformView.gameObject.SetActive(true);
+                transformView.eulerAngles = new Vector3(90, 0, -transform.eulerAngles.y + viewA * 0.5f);
+                transformView.sizeDelta = new Vector2(viewD * 2.05f, viewD * 2.05f);
+            }
+        }
+        else
+        {
+            Debug.Log("RectTransform de la vision introuvable (situé dans le Canvas 'ViewCanvas' en enfant de l'ennemi)");
+        }
+        if (imageView != null)
+        {
+            imageView.fillAmount = viewA / 360f;
+        }
+        else
+        {
+            Debug.Log("Image de la vision introuvable (situé dans le Canvas 'ViewCanvas' en enfant de l'ennemi)");
+        }
+    }
+
 
     public virtual void DefinePattern(int pattern,Vector3 botLeft, int sizeX, int sizeY, int prog = 0)
     {
@@ -202,30 +256,61 @@ public class BaseEnemy : BaseObject {
     public virtual void ChangeState(State st)
     {
         myState = st;
+        switch((int)st)
+        {
+            case 0:
+                viewAngle = 0;
+                viewDistance = 0;
+                addedViewAngle = 0;
+                addedViewDistance = 0;
+                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance);
+                break;
+            case 1:
+
+            case 4:
+            case 5:
+            case 6:
+                addedViewAngle = 20;
+                addedViewDistance = 1.5f;
+                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance);
+                break;
+                
+            default:
+                addedViewAngle = 0;
+                addedViewDistance = 0;
+                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance);
+                break;
+
+        }
+        myMaterial.color = colorState[(int)st];
     }
 
     protected virtual void Vision()
     {
         //Debug.Log(Vector3.Distance(transform.position, player.transform.position));
-        if (Vector3.Distance(transform.position, player.transform.position) < viewDistance)
+        if (Vector3.Distance(transform.position, player.transform.position) < (viewDistance + addedViewDistance))
         {
             //Debug.Log(Vector3.Angle(transform.forward, (player.transform.position - transform.position)));
-            if (Vector3.Angle(transform.forward, (player.transform.position - transform.position)) < viewAngle * 0.5f)
+            if (Vector3.Angle(transform.forward, (player.transform.position - transform.position)) < (viewAngle + addedViewAngle) * 0.5f)
             { 
                 if (Physics.Raycast(transform.position, player.transform.position - transform.position, Vector3.Distance(transform.position, player.transform.position)))
                 {// Raycast vers le Player pour savoir si il y a un obstacle entre qui obstrue la vision
                     // Player repéré
-                    ChangeState(State.ALERTED);
-                    pursuit = true;     // engage la poursuite du player
-                    if(inPattern)
+                    if(myState != State.ALERTED)    // Si pas déja alerté
                     {
-                        posBeforeAlert = transform.position; // Définit la position à laquelle retourner après l'alerte
-                        rotBeforeAlert = transform.rotation;
+                        ChangeState(State.ALERTED);
+                        pursuit = true;     // engage la poursuite du player
+                        if (inPattern)
+                        {
+                            posBeforeAlert = transform.position; // Définit la position à laquelle retourner après l'alerte
+                            rotBeforeAlert = transform.rotation;
+                        }
+                        inPattern = false;
+                        Debug.Log("Player Repéré, alerte lancée");
+                        // Alerte tous les ennemis
                     }
-                    inPattern = false;
-                    
-                    Debug.Log("Player Repéré, alerte lancée");
-                    // Alerte tous les ennemis
+
+                    chaseTimer = 0;     // Ennemi visible donc temps avant fin de poursuite remis à 0 
                 }
             }
         }
@@ -261,11 +346,30 @@ public class BaseEnemy : BaseObject {
             Vision();       // Script de vue
 
         }
+        else
+        if(myState == State.SEARCHING)
+        {
+            if(searching)
+            {
+                MoveToPosition(searchArea);
+                if(Vector3.Distance(transform.position, searchArea) <= 0.1f)
+                {
+                    searching = false;
+                    ChangeState(State.AWAKE);
+                }
+            }
+            else
+            {
+                ChangeState(State.AWAKE);
+            }
+            Vision();
+        }
+        else
         if (myState == State.ALERTED)
         {
             if (pursuit) // Poursuite du player
             {
-                transform.LookAt(player.transform.position);
+                //transform.LookAt(player.transform.position);
                 MoveToPosition(player.transform.position);
                 if (Vector3.Distance(transform.position, player.transform.position) < atkRange) // player à portée d'attaque
                 {
@@ -273,13 +377,31 @@ public class BaseEnemy : BaseObject {
                     ChangeState(State.AWAKE);
                     //player.SetActive(false);
                 }
-            }  
+                chaseTimer += Time.deltaTime;
+                if(chaseTimer > ProceduralValues.chaseTime)
+                {
+                    searchArea = player.transform.position;
+                    ChangeState(State.SEARCHING);
+                }
+            }
+            Vision(); 
         }
+        else
         if(myState == State.DEAD)
         {
             gameObject.SetActive(false);
         }
 
+    }
+
+    public void LaunchSearch( Vector3 pos)      // Fonction permettant de donner un points à aller vérifier pour la présence du joueur
+    {
+        searchArea = new Vector3(pos.x, 1, pos.z);
+        searching = true;
+        inPattern = false;
+        posBeforeAlert = transform.position;
+        rotBeforeAlert = transform.rotation;
+        ChangeState(State.SEARCHING);
     }
 
     private void PatternNone()

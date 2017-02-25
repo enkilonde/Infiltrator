@@ -258,7 +258,18 @@ public class PatternGenerator : BaseObject
                     (int)conf.rectSize.y,
                     conf.progress);
                  */
-                 
+
+
+                int rd = Random.Range(0, 100);
+                if (rd < ProceduralValues.asleepChances * 100)
+                {
+                    rd = 1;
+                }
+                else
+                {
+                    rd = 3;
+                }
+
                 enemy.GetComponent<Soldier>().SetPattern(conf.pattern,
                     px,
                     pz,
@@ -266,7 +277,7 @@ public class PatternGenerator : BaseObject
                     (int)conf.rectSize.y,
                     conf.progress);
                 
-                enemy.GetComponent<Soldier>().EnemyActivated();
+                enemy.GetComponent<Soldier>().EnemyActivated(rd);
                 enemy.transform.parent = papa;
                 TabEnemies.Add(enemy.GetComponent<BaseEnemy>());
             }

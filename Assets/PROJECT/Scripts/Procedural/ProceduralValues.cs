@@ -29,6 +29,9 @@ public class ProceduralValues
     public static float enemyViewDistance = 5f;
     public static float enemySpeed = 3f;
     public static float enemyAtkRange = 1.5f;
+    public static float asleepChances = 0.15f;
+
+    public static float chaseTime = 2.5f;
 
     //Merge procédural - gameplay
     public const float unitValue = 1;

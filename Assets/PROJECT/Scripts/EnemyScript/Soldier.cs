@@ -28,9 +28,9 @@ public class Soldier : BaseEnemy
     */
 
 
-    public void EnemyActivated()
+    public void EnemyActivated( int state)
     {
-        Instantiated(startState, ProceduralValues.enemyMaxHealth * multHealth,
+        Instantiated((State)state, ProceduralValues.enemyMaxHealth * multHealth,
            ProceduralValues.enemyStartHealth * multHealth,
            ProceduralValues.enemyViewAngle * multAngle,
            ProceduralValues.enemyViewDistance * multDistance,
