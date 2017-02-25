@@ -73,9 +73,11 @@ public class RT
 public class Map : BaseObject
 {
 
-    private float procValueTreasure = 0.5f;
-    private float procValueEmpty = 0.5f;
+    private float procValueTreasure = 0.5f;         //valeur procedural pour la salle Treasure, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles de tresors
+    private float procValueEmpty = 0.5f;            //valeur procedural pour la salle Empty, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles vides
 
+    private int limitTreasure=5;                    //Valeur max du nombre de salle de tresor
+    private int limitEmpty=1;                       //Valeur max du nombre de salle vide
 
 
     public GameObject roomModele;
@@ -663,6 +665,10 @@ public class Map : BaseObject
     /// <returns></returns>
     public Room[] generateMap(RT[] lvl)
     {
+
+        int cptTresor=0;
+        int cptEmpty = 0;
+
         Room[] map = new Room[lvl.Length];
 
         List<List<Vector2>> temp = new List<List<Vector2>>();
@@ -727,15 +733,17 @@ public class Map : BaseObject
                 }
                 else
                 {
-                    if (lvl[i].getCoNb() == 1 && Random.Range(0.0f, 1.0f) < procValueTreasure)
+                    if (lvl[i].getCoNb() == 1 && Random.Range(0.0f, 1.0f) < procValueTreasure && cptTresor<limitTreasure)
                     {
                         type = RoomType.TREASURE;
+                        cptTresor++;
                     }
                     else
                     {
-                        if (Random.Range(0.0f, 1.0f) < procValueEmpty)
+                        if (Random.Range(0.0f, 1.0f) < procValueEmpty && cptEmpty<limitEmpty)
                         {
                             type = RoomType.EMPTY;
+                            cptEmpty++;
                         }
                     }
                 }
