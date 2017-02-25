@@ -3,15 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Rules
+// Boss connect with 1 normal
+
+// Start connect with 1 room
+// Tresor connect with 1 rooms
+// Every room at least 1 connection
+// 0 = NoRoom, 1 = Normal, 2= Empty, 3 = Depart, 4 = Arrivee, 5= Tresor
+
+/// <summary>
+/// Class RT, Room possede une coordonnee en x et y, et un tableau de connexion size 4, valeur a l'indice 0 correspond au numero de la room connecte a droite
+/// valeur a l'indice 1 correspond au numero de la room connecte en haut
+/// valeur a l'indice 2 correspond au numero de la room connecte en bas
+/// valeur a l'indice 3 correspond au numero de la room connecte a gauche
+/// </summary>
 [System.Serializable]
 public class RT
 {
     private int x;
     private int y;
-    public int[] connect;                   // A l'indice 0 -> connexion a droite
-                                            // A l'indice 1 -> connexion en haut
-                                            // A l'indice 2 -> connexion en bas
-                                            // A l'indice 3 -> connexion a gauche
+    public int[] connect;
 
     public RT()
     {
@@ -32,7 +43,7 @@ public class RT
     {
         y = y1;
     }
-    
+
     public int getX()
     {
         return x;
@@ -46,10 +57,10 @@ public class RT
 
     public int getCoNb()
     {
-        int a=0;
-        for(int i=0;i<4;i++)
+        int a = 0;
+        for (int i = 0; i < 4; i++)
         {
-            if(connect[i]!=-1)
+            if (connect[i] != -1)
             {
                 a++;
             }
@@ -59,9 +70,14 @@ public class RT
 }
 
 
-public class Map : BaseObject {
+public class Map : BaseObject
+{
 
-    
+    private float procValueTreasure = 0.5f;
+    private float procValueEmpty = 0.5f;
+
+
+
     public GameObject roomModele;
     public GameObject lineH;
     public GameObject lineV;
@@ -75,29 +91,34 @@ public class Map : BaseObject {
 
     int inf = 999;
 
-
-    // Rules
-    // Boss connect with 1 normal
-
-    // Start connect with 1 room
-    // Tresor connect with 1 rooms
-    // Every room at least 1 connection
-
-
-
-    // graph
-
-
-    // prim
-
-
-
-    // init a inf    , si HM[i]=-1 alors disparition dans la heap map
+    /// <summary>
+    ///  Fonction qui check si il y a deja une room a la position x et y
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public bool isAlreadyInMap(RT[] l, int x, int y)
+    {
+        for (int i = 0; i < l.Length; i++)
+        {
+            if (l[i].getX() == x && l[i].getY() == y)
+            {
+                return true;
+            }
+        }
 
 
-    // 0 = NoRoom, 1 = Normal, 2= Empty, 3 = Depart, 4 = Arrivee, 5= Tresor
+        return false;
+    }
 
 
+    /// <summary>
+    /// Fonction qui retourne l'index de la valeur minimum dans la heap map
+    /// </summary>
+    /// <param name="HM"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
     public int minKey(int[] HM, int n)
     {
         int min = inf;
@@ -115,14 +136,20 @@ public class Map : BaseObject {
         return imin;
     }
 
-
-    public int[] prim(int[,] graph, int n,ref int[]o)
+    /// <summary>
+    /// Fonction qui deroule l'algorithme de prim sur le graph et renvoies le resultat sous la forme d'un tableau de int, valeur associe a l'index correspond au precedent
+    /// </summary>
+    /// <param name="graph"></param>
+    /// <param name="n"></param>
+    /// <param name="o"></param>
+    /// <returns></returns>
+    public int[] prim(int[,] graph, int n, ref int[] o)
     {
         int[] HM = new int[n];
         int[] resul = new int[n];
-        
 
 
+        // init a inf    , si HM[i]=-1 alors disparition dans la heap map
         for (int i = 0; i < n; i++)
         {
 
@@ -151,23 +178,30 @@ public class Map : BaseObject {
             }
 
         }
-        
+
         return resul;
 
 
     }
 
-    
-    
+
+    /// <summary>
+    /// Fonction qui a partir des resultats de l'algo de Prim cree un tableau de RT, on associe a chaque room une position et ses connexions
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="n"></param>
+    /// <param name="o"></param>
+    /// <returns></returns>
     public RT[] map(int[] r, int n, int[] o)
     {
+        bool noPos = true;
         string[] randnb = { "1234", "1243", "1324", "1342", "1423", "1432",
             "2134", "2143", "2314", "2341", "2413", "2431",
             "3124","3142", "3214", "3241", "3412", "3421"
             , "4123", "4132", "4213", "4231", "4312", "4321" };
 
-        var m = new Dictionary<int,float>();
-        
+        var m = new Dictionary<int, float>();
+
 
         //int ar;
         int a;
@@ -191,10 +225,41 @@ public class Map : BaseObject {
 
             //Debug.Log(a1 + " " + a2 + " " + a3 + " " + a4 + "    --------------");
 
-            m.Add(0,a1);
-            m.Add(1, a2);
-            m.Add(2, a3);
-            m.Add(3, a4);
+
+            // Ajout algo verif
+
+
+
+
+            if (!isAlreadyInMap(lvl, lvl[o[i]].getX() + 2, lvl[o[i]].getY()))                                      // Si position valable, add, else default----< Must Use Dictionnary
+            {
+                m.Add(0, a1);
+                noPos = false;
+            }
+            if (!isAlreadyInMap(lvl, lvl[o[i]].getX(), lvl[o[i]].getY() + 2))
+            {
+                m.Add(1, a2);
+                noPos = false;
+            }
+            if (!isAlreadyInMap(lvl, lvl[o[i]].getX(), lvl[o[i]].getY() - 2))
+            {
+                m.Add(2, a3);
+                noPos = false;
+
+            }
+            if (!isAlreadyInMap(lvl, lvl[o[i]].getX() - 2, lvl[o[i]].getY()))
+            {
+                m.Add(3, a4);
+                noPos = false;
+            }
+
+            if (noPos)                                       // default
+            {
+                m.Add(0, a1);
+
+            }
+            noPos = true;
+
 
             for (int j = 1; j < r.Length; j++)
             {
@@ -211,19 +276,19 @@ public class Map : BaseObject {
                     //ar = randnb[l][a] - 49;
                     //Debug.Log(j + "      " + a + "         " + i);
                     //Debug.Log(r[j]+ "      " + a+ "         "+ o[i]);
-                    
 
-                    int cpt=0;
-                    
-                    for(int ik=0;ik<4;ik++)
+
+                    int cpt = 0;
+
+                    for (int ik = 0; ik < 4; ik++)
                     {
                         if (m.ContainsKey(ik))
                         {
-                            for(int lo=ik+1;lo<4;lo++)
+                            for (int lo = ik + 1; lo < 4; lo++)
                             {
-                                if(m.ContainsKey(lo))
+                                if (m.ContainsKey(lo))
                                 {
-                                    if(m[ik]>m[lo])
+                                    if (m[ik] > m[lo])
                                     {
                                         cpt = ik;
 
@@ -234,7 +299,7 @@ public class Map : BaseObject {
                                     }
                                 }
                             }
-                            
+
                         }
 
                     }
@@ -281,13 +346,19 @@ public class Map : BaseObject {
 
             m.Clear();
         }
-        
+
         return lvl;
-        
+
     }
 
-
-    public void renderLink(RT[] lvl,int[] o, Vector3 offset = default(Vector3), GameObject Parent = null)
+    /// <summary>
+    /// Fonction qui relie les rooms graphiquement avec des traits
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <param name="o"></param>
+    /// <param name="offset"></param>
+    /// <param name="Parent"></param>
+    public void renderLink(RT[] lvl, int[] o, Vector3 offset = default(Vector3), GameObject Parent = null)
     {
         int e = 0;
         int e1 = 0;
@@ -297,7 +368,7 @@ public class Map : BaseObject {
             lineVert[i] = Instantiate(lineV, new Vector3(0f, 0f, 10f), Quaternion.identity) as GameObject;
             lineHori[i].SetActive(false);
             lineVert[i].SetActive(false);
-            if(Parent)
+            if (Parent)
             {
                 lineHori[i].transform.SetParent(Parent.transform);
                 lineVert[i].transform.SetParent(Parent.transform);
@@ -313,14 +384,14 @@ public class Map : BaseObject {
             for (int j = 0; j < 4; j++)
             {
 
-               
+
 
                 if (lvl[o[i]].connect[j] != -1)
                 {
                     switch (j)
                     {
                         case 0:                                             //Connection droite
-                            
+
 
                             lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY()) + offset;
 
@@ -328,19 +399,19 @@ public class Map : BaseObject {
                             e1++;
                             break;
                         case 1:                                                                 //Connection haut
-                            
+
                             lineVert[e].transform.position = new Vector3(lvl[o[i]].getX(), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f) + offset;
                             lineVert[e].SetActive(true);
                             e++;
                             break;
                         case 2:                                                                 //Connection bas
-                            
+
                             lineVert[e].transform.position = new Vector3((lvl[o[i]].getX()), (lvl[lvl[o[i]].connect[j]].getY() + lvl[o[i]].getY()) / 2.0f) + offset;
                             lineVert[e].SetActive(true);
                             e++;
                             break;
                         case 3:
-                            
+
                             lineHori[e1].transform.position = new Vector3((lvl[lvl[o[i]].connect[j]].getX() + lvl[o[i]].getX()) / 2.0f, lvl[o[i]].getY()) + offset;
                             lineHori[e1].SetActive(true);
                             e1++;
@@ -349,9 +420,14 @@ public class Map : BaseObject {
                 }
             }
         }
-}
+    }
 
-
+    /// <summary>
+    /// Fonction qui affiche les rooms graphiquement
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <param name="offset"></param>
+    /// <param name="Parent"></param>
     public void renderMap(RT[] lvl, Vector3 offset = default(Vector3), GameObject Parent = null)
     {
         for (int i = 0; i < lvl.Length; i++)
@@ -362,10 +438,14 @@ public class Map : BaseObject {
             tabRoom[i].transform.GetChild(0).transform.GetComponentInChildren<TextMesh>().text = "" + i;
             if (Parent) tabRoom[i].transform.SetParent(Parent.transform);
         }
-       
+
     }
 
-
+    /// <summary>
+    /// Fonction qui genere aleatoirement un graph de taille n
+    /// </summary>
+    /// <param name="n"></param>
+    /// <returns></returns>
     public int[,] procMap(int n)
     {
         int[,] graph = new int[n, n];
@@ -408,6 +488,63 @@ public class Map : BaseObject {
         return graph;
     }
 
+    /// <summary>
+    /// Fomction qui link les rooms cotes a cotes
+    /// </summary>
+    /// <param name="lvl"></param>
+    public void linkAll(ref RT[] lvl)
+    {
+        for (int i = 0; i < lvl.Length; i++)
+        {
+
+            if (lvl[i].connect[0] == -1 && isAlreadyInMap(lvl, lvl[i].getX() + 2, lvl[i].getY()))
+            {
+                lvl[i].connect[0] = indAt(lvl, lvl[i].getX() + 2, lvl[i].getY());
+                lvl[indAt(lvl, lvl[i].getX() + 2, lvl[i].getY())].connect[3] = i;
+            }
+            if (lvl[i].connect[1] == -1 && isAlreadyInMap(lvl, lvl[i].getX(), lvl[i].getY() + 2))
+            {
+                lvl[i].connect[1] = indAt(lvl, lvl[i].getX(), lvl[i].getY() + 2);
+                lvl[indAt(lvl, lvl[i].getX(), lvl[i].getY() + 2)].connect[2] = i;
+            }
+            if (lvl[i].connect[2] == -1 && isAlreadyInMap(lvl, lvl[i].getX(), lvl[i].getY() - 2))
+            {
+                lvl[i].connect[2] = indAt(lvl, lvl[i].getX(), lvl[i].getY() - 2);
+                lvl[indAt(lvl, lvl[i].getX(), lvl[i].getY() - 2)].connect[1] = i;
+            }
+            if (lvl[i].connect[3] == -1 && isAlreadyInMap(lvl, lvl[i].getX() - 2, lvl[i].getY()))
+            {
+                lvl[i].connect[3] = indAt(lvl, lvl[i].getX() - 2, lvl[i].getY());
+                lvl[indAt(lvl, lvl[i].getX() - 2, lvl[i].getY())].connect[0] = i;
+            }
+
+
+
+        }
+    }
+
+    /// <summary>
+    /// Fonction qui renvoie l'indice de la room a la position x et y
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public int indAt(RT[] lvl, int x, int y)
+    {
+        for (int i = 0; i < lvl.Length; i++)
+        {
+            if (lvl[i].getX() == x && lvl[i].getY() == y)
+            {
+                return i;
+            }
+        }
+
+
+        return 0;
+    }
+
+    /*
     public Room[] generateMap(int n, RT[] lvl)
     {
         Room[] map = new Room[n];
@@ -500,7 +637,7 @@ public class Map : BaseObject {
                 }
             }
 
-            ProceduralValues.ApplyRandomSetup();
+           
             map[i] = new Room(ref tmp,RoomType.NORMAL);
 
             
@@ -517,7 +654,13 @@ public class Map : BaseObject {
         return map;
 
     } //plus utilisé
-    
+    */
+
+    /// <summary>
+    /// Fonction qui a partir d'un tableau de room RT, genere un tableau de room Room et instancie les portes
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <returns></returns>
     public Room[] generateMap(RT[] lvl)
     {
         Room[] map = new Room[lvl.Length];
@@ -572,10 +715,32 @@ public class Map : BaseObject {
             Vector2[] doors = temp[i].ToArray();
             int[] doorsTargets = tempTarget[i].ToArray();
             RoomType type = RoomType.NORMAL;
-            if (i == 0)
+            if (i == lvl.Length - 2)
             {
                 type = RoomType.EMPTY;
             }
+            else
+            {
+                if (i == lvl.Length - 1)
+                {
+                    type = RoomType.BOSS;
+                }
+                else
+                {
+                    if (lvl[i].getCoNb() == 1 && Random.Range(0.0f, 1.0f) < procValueTreasure)
+                    {
+                        type = RoomType.TREASURE;
+                    }
+                    else
+                    {
+                        if (Random.Range(0.0f, 1.0f) < procValueEmpty)
+                        {
+                            type = RoomType.EMPTY;
+                        }
+                    }
+                }
+            }
+
             //Debug.Log(i + " : " + doorsTargets.Length);
 
             map[i] = new Room(ref doors, ref doorsTargets, type);
@@ -585,16 +750,21 @@ public class Map : BaseObject {
         return map;
     }
 
+    /// <summary>
+    /// Fonction qui verifie si la map genere est coherente
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <returns></returns>
     public bool checkMap(RT[] lvl)
     {
-        for(int i=0;i<lvl.Length;i++)
+        for (int i = 0; i < lvl.Length; i++)
         {
             for (int j = i + 1; j < lvl.Length; j++)
             {
                 if (lvl[j].getX() == lvl[i].getX() && lvl[j].getY() == lvl[i].getY())
                 {
                     //Debug.Log(lvl[j].getX() + "       " + lvl[i].getX() +"           "+ lvl[j].getY() + "       " + lvl[i].getY());
-                   // Debug.Log(i + " " + j);
+                    // Debug.Log(i + " " + j);
                     return false;
 
                 }
@@ -604,46 +774,119 @@ public class Map : BaseObject {
         return true;
     }
 
+    /// <summary>
+    /// Fonction qui rajoute la salle de debut et de fin aux deux derniers indices du tableau
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <returns></returns>
+    public RT[] startEndMap(RT[] lvl)
+    {
+        RT[] l = new RT[lvl.Length + 2];
+        l[lvl.Length] = start(ref lvl);
+        for (int i = 0; i < lvl.Length; i++)
+        {
+            l[i] = lvl[i];
+        }
+        l[lvl.Length + 1] = end(ref lvl);
+        return l;
+    }
+
+    /// <summary>
+    /// Fonction qui cree la room de debut
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <returns></returns>
+    public RT start(ref RT[] lvl)
+    {
+
+        int ind = 0;
+        RT r = new RT();
+
+        for (int i = 1; i < lvl.Length; i++)
+        {
+            if (lvl[i].getX() < lvl[ind].getX())
+            {
+                ind = i;
+            }
+        }
+
+        r.setX(lvl[ind].getX() - 2);
+        r.setY(lvl[ind].getY());
+
+        r.connect[0] = ind;
+        lvl[ind].connect[3] = lvl.Length;
+
+        return r;
+    }
+
+    /// <summary>
+    /// Fonction qui cree la room de fin
+    /// </summary>
+    /// <param name="lvl"></param>
+    /// <returns></returns>
+    public RT end(ref RT[] lvl)
+    {
+
+        int ind = 0;
+        RT r = new RT();
+
+        for (int i = 1; i < lvl.Length; i++)
+        {
+            if (lvl[i].getX() > lvl[ind].getX())
+            {
+                ind = i;
+            }
+        }
+
+        r.setX(lvl[ind].getX() + 2);
+        r.setY(lvl[ind].getY());
+
+        r.connect[3] = ind;
+        lvl[ind].connect[0] = lvl.Length + 1;
+
+        return r;
+    }
 
     // Use this for initialization
     protected override void MinimapGeneration()
     {
-        int n=20;
+        int n = 10;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
         int[] o = new int[n - 1];
 
-        //int[,] graph =
-        //{                       { 0, 0, 0, 0, 5, 0,0,0,0,0},
-        //                        { 0, 0, 29, 87, 0, 87,0,0,0,0},
-        //                        { 0, 29, 0, 0, 0, 88,0,0,0,0},
-        //                        { 0, 87, 0, 0, 49,0,0,0,61,0},
-        //                        { 5, 0, 0,49, 0, 0,0,0,27,0},
-        //                        { 0, 87, 88, 0, 0, 0,0,79,0,0},
-        //                        { 0, 0, 0, 0, 0, 0,0,0,27,0},
-        //                        { 0, 0, 0, 0,0, 79, 0,0,49,7},
-        //                        { 0, 0, 0,61, 27, 0,27,49,0,10},
-        //                        { 0, 0, 0, 0,0, 0,0,7,10,0},
-        //};
+        /*int[,] graph =
+        {                       { 0, 0, 0, 0, 5, 0,0,0,0,0},
+                                { 0, 0, 29, 87, 0, 87,0,0,0,0},
+                                { 0, 29, 0, 0, 0, 88,0,0,0,0},
+                                { 0, 87, 0, 0, 49,0,0,0,61,0},
+                                { 5, 0, 0,49, 0, 0,0,0,27,0},
+                                { 0, 87, 88, 0, 0, 0,0,79,0,0},
+                                { 0, 0, 0, 0, 0, 0,0,0,27,0},
+                                { 0, 0, 0, 0,0, 79, 0,0,49,7},
+                                { 0, 0, 0,61, 27, 0,27,49,0,10},
+                                { 0, 0, 0, 0,0, 0,0,7,10,0},
+        };
+        */
 
-        int[,] graph=procMap(n);
+        int[,] graph = procMap(n);
         n = (int)System.Math.Sqrt(graph.Length);
-        
-        int[] resultat= prim(graph, n, ref o);
-        fullmap=map(resultat,n,o);
-        
+
+        int[] resultat = prim(graph, n, ref o);
+        fullmap = map(resultat, n, o);
+
         while (!checkMap(fullmap))
         {
             o = new int[n - 1];
             graph = procMap(n);
             resultat = prim(graph, n, ref o);
-            fullmap = map(resultat, n,o);
-                                              // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
+            fullmap = map(resultat, n, o);
+            // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
             //Debug.Log("False");
 
         }
 
+        linkAll(ref fullmap);
 
-
-
+        fullmap = startEndMap(fullmap);
         //Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
         rooms = generateMap(fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
 
@@ -651,6 +894,10 @@ public class Map : BaseObject {
         RenderMinimap(o);
     }
 
+    /// <summary>
+    /// Fonction qui render la minimap
+    /// </summary>
+    /// <param name="o"></param>
     void RenderMinimap(int[] o)
     {
         Vector3 offset = new Vector3(100, 100, 100);
