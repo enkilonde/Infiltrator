@@ -39,6 +39,8 @@ public class BaseEnemy : BaseObject {
     private float timer = 0f;
     private bool turning = false;
 
+    public bool canSee = true;
+
     delegate void FollowPattern();
     FollowPattern myPattern; // Delegate permettant de définir le pattern à exécuter lors du state AWAKE
 
@@ -126,11 +128,11 @@ public class BaseEnemy : BaseObject {
 
     }
 
-    public virtual void ChangeView(float viewA, float viewD)
+    public virtual void ChangeView(float viewA, float viewD, bool bSee)
     {
         if (transformView != null)
         {
-            if(viewA == 0 || viewD == 0)    // Si la vision est nulle (DEAD ou ASLEEP)
+            if(!bSee)    // Si la vision est nulle (DEAD ou ASLEEP)
             {
                 transformView.gameObject.SetActive(false);
             }
@@ -259,26 +261,28 @@ public class BaseEnemy : BaseObject {
         switch((int)st)
         {
             case 0:
-                viewAngle = 0;
-                viewDistance = 0;
+            case 1:
+                canSee = false;
                 addedViewAngle = 0;
                 addedViewDistance = 0;
-                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance);
+                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance, canSee);
                 break;
-            case 1:
+            
 
             case 4:
             case 5:
             case 6:
+                canSee = true;
                 addedViewAngle = 20;
                 addedViewDistance = 1.5f;
-                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance);
+                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance, canSee);
                 break;
                 
             default:
+                canSee = true;
                 addedViewAngle = 0;
                 addedViewDistance = 0;
-                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance);
+                ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance, canSee);
                 break;
 
         }
