@@ -25,10 +25,10 @@ public class PauseMenuBehaviour : BaseObject
         else Destroy(this);
 
         pauseCanvas = GetComponent<Canvas>();
-        walkSpeedTxt = pauseCanvas.transform.Find("WalkSpeed").GetComponent<Text>();
-        killSpeedtxt = pauseCanvas.transform.Find("KillSpeed").GetComponent<Text>();
-        unlockSpeedTxt = pauseCanvas.transform.Find("UnlockSpeed").GetComponent<Text>();
-        actionRangeTxt = pauseCanvas.transform.Find("ActionRange").GetComponent<Text>();
+        walkSpeedTxt = pauseCanvas.transform.Find("Stats").Find("WalkSpeed").GetComponent<Text>();
+        killSpeedtxt = pauseCanvas.transform.Find("Stats").Find("KillSpeed").GetComponent<Text>();
+        unlockSpeedTxt = pauseCanvas.transform.Find("Stats").Find("UnlockSpeed").GetComponent<Text>();
+        actionRangeTxt = pauseCanvas.transform.Find("Stats").Find("ActionRange").GetComponent<Text>();
 
     }
 

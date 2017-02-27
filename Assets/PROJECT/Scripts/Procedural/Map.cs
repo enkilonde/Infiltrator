@@ -72,6 +72,7 @@ public class RT
 
 public class Map : BaseObject
 {
+    public int nombreDeSalles = 15;
 
     private float procValueTreasure = 0.5f;         //valeur procedural pour la salle Treasure, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles de tresors
     private float procValueEmpty = 0.5f;            //valeur procedural pour la salle Empty, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles vides
@@ -858,7 +859,7 @@ public class Map : BaseObject
     // Use this for initialization
     protected override void MinimapGeneration()
     {
-        int n = 10;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
+        int n = nombreDeSalles-2;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
         int[] o = new int[n - 1];
 
         /*int[,] graph =
