@@ -287,6 +287,7 @@ public class BaseEnemy : BaseObject {
 
     protected virtual void Vision()
     {
+        if (player == null) return;
         //Debug.Log(Vector3.Distance(transform.position, player.transform.position));
         if (Vector3.Distance(transform.position, player.transform.position) < (viewDistance + addedViewDistance))
         {

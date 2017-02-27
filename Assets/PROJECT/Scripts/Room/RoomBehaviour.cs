@@ -4,10 +4,15 @@ using System.Collections;
 [SelectionBase]
 public class RoomBehaviour : RoomObject
 {
+    public enum RoomState { UNKNOWN, KNOWN, EXPLORED, CURRENT}
+    public RoomState state;
+
     public DoorBehaviour[] doors;
     public ButtonUnlockDoors[] buttonsUnlock;
     public BaseEnemy[] Ennemys;
     public Room roomClass;
+
+    
 
     protected override void FirstAwake()
     {

@@ -12,8 +12,6 @@ public class GameManager : BaseObject
     {
         base.FirstAwake();
 
-        DontDestroyOnLoad(gameObject);
-
         mapScript = FindObjectOfType<Map>();
         if (mapScript == null) Debug.LogError("Missing 'Map' script in scene");
         GameObject.Find("LoadingScreenCanvas").GetComponent<Canvas>().enabled = true;
@@ -25,10 +23,18 @@ public class GameManager : BaseObject
     protected override void SpawnPlayer()
     {
         base.SpawnPlayer();
-
-        GameObject player = Instantiate<GameObject>(Resources.Load<GameObject>("Player"));
-        player.transform.position = mapScript.rooms[0].gameobject.transform.position + new Vector3(0, 1.0f, 0);
-
+        GameObject player = null;
+        if (PlayerController.Activated)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+        else
+        {
+            player = Instantiate<GameObject>(Resources.Load<GameObject>("Player"));
+        }
+        
+        player.transform.position = mapScript.rooms[ProceduralValues.numberOfRoom - 2].gameobject.transform.position + new Vector3(0, 1.0f, 0);
+        Camera.main.GetComponent<CameraBehaviour>().targetRoom = mapScript.rooms[ProceduralValues.numberOfRoom - 2].gameobject.transform;
     }
 
 
@@ -58,7 +64,6 @@ public class GameManager : BaseObject
         }
 
         GameObject.Find("LoadingScreenCanvas").GetComponent<Canvas>().enabled = false;
-
 
     }
 

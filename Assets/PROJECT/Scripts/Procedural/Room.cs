@@ -13,7 +13,7 @@ public class Room{
     [SerializeField] private int nbPointPerDoor;
     [SerializeField] private int nbTrianglePerDoor;
 
-    [SerializeField] private RoomType roomType;
+    [SerializeField] public RoomType roomType;
     private SpriteType [,] roomMatrix;
     private List<Rect> listRect = new List<Rect>();
     [SerializeField] private Vector2 [] doors;

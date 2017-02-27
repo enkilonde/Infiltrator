@@ -17,6 +17,7 @@ public class DoorBehaviour : RoomObject
     public GameObject MinimapContainer;
 
     Renderer rend;
+    MinimapBehaviour miniMBehaviour;
 
     public RoomBehaviour ownRoom;
 
@@ -35,6 +36,7 @@ public class DoorBehaviour : RoomObject
         roomIndex = transform.parent.parent.GetComponent<RoomBehaviour>().roomClass.roomIndex;
         minimapRoomObject = MinimapContainer.transform.GetChild(roomIndex).gameObject;
         ownRoom = transform.parent.parent.GetComponent<RoomBehaviour>();
+        miniMBehaviour = FindObjectOfType<MinimapBehaviour>();
 
         SetState(doorState.LOCKED);
         minimapRoomObject.SetActive(false);
@@ -46,7 +48,7 @@ public class DoorBehaviour : RoomObject
     protected override void OnLoadEndedLate()
     {
         base.OnLoadEndedLate();
-        if (roomIndex == 0)
+        if (roomIndex == ProceduralValues.numberOfRoom - 2)
         {
             minimapRoomObject.SetActive(true);
             UpdateMinimap(this, this);
@@ -58,14 +60,17 @@ public class DoorBehaviour : RoomObject
         switch (newState)
         {
             case doorState.LOCKED:
+                state = doorState.LOCKED;
                 ToggleLock(true);
                 break;
 
             case doorState.OPEN:
+                state = doorState.OPEN;
                 ToggleLock(false);
                 break;
 
             case doorState.UNLOCKING:
+                state = doorState.UNLOCKING;
                 rend.material.color = Color.gray;
                 break;
 
@@ -96,10 +101,21 @@ public class DoorBehaviour : RoomObject
     {
         if (coll.tag != "Player") return;
         if (locked) return;
+
         coll.transform.position = TargetDoor.transform.position + TargetDoor.transform.forward * 1.1f + new Vector3(0, 1, 0);
         coll.GetComponent<PlayerController>().currentRoom = TargetDoor.roomIndex;
         UpdateMinimap(this, TargetDoor);
         Camera.main.GetComponent<CameraBehaviour>().targetRoom = TargetDoor.transform.parent;
+
+        roomBehaviourScript.state = RoomBehaviour.RoomState.EXPLORED;
+        TargetDoor.roomBehaviourScript.state = RoomBehaviour.RoomState.CURRENT;
+        for (int i = 0; i < TargetDoor.roomBehaviourScript.doors.Length; i++)
+        {
+            if(TargetDoor.roomBehaviourScript.doors[i].TargetDoor.roomBehaviourScript.state == RoomBehaviour.RoomState.UNKNOWN)
+            {
+                TargetDoor.roomBehaviourScript.doors[i].TargetDoor.roomBehaviourScript.state = RoomBehaviour.RoomState.KNOWN;
+            }
+        }
     }
 
     void UpdateMinimap(DoorBehaviour oldRoom, DoorBehaviour nextRoom)
@@ -117,7 +133,6 @@ public class DoorBehaviour : RoomObject
             }
         }
     }
-
 
     void OnDrawGizmos()
     {

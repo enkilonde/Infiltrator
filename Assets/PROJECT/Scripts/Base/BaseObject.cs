@@ -12,7 +12,7 @@ public class BaseObject : MonoBehaviour
     }
     
 
-    IEnumerator StartingProcess()
+    public virtual IEnumerator StartingProcess()
     {
 
         FirstAwake();
@@ -20,6 +20,10 @@ public class BaseObject : MonoBehaviour
         yield return null;
 
         SecondAwake();
+
+        yield return null;
+
+        CheckNewFloor();
 
         yield return null;
 
@@ -54,9 +58,11 @@ public class BaseObject : MonoBehaviour
         OnLoadEndedLate();
     }
 
+    //on vérifie si c'est un nouvel étage ou pas, regarder si le player est actif pour ça
+    protected virtual void CheckNewFloor() { }
+
     //C'est ici qu'on attribue les références
     protected virtual void FirstAwake() { }
-
 
     //on utilisera cette fonction comme on utilise l'Awake normalement.
     protected virtual void SecondAwake() { }
@@ -76,7 +82,7 @@ public class BaseObject : MonoBehaviour
     //On fait pop les ennemis et items dans les salles
     protected virtual void MonsterInstantiate() { }
 
-    protected virtual void SpawnPlayer() { }
+    protected virtual void SpawnPlayer() {}
 
     protected virtual void OnLoadEnded()
     {
@@ -94,6 +100,11 @@ public class BaseObject : MonoBehaviour
     }
 
     protected virtual void BaseUpdate()
+    {
+
+    }
+
+    public virtual void EndLevel(bool hardReset = false)
     {
 
     }

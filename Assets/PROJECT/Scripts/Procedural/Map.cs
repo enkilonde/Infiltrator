@@ -72,8 +72,6 @@ public class RT
 
 public class Map : BaseObject
 {
-    public int nombreDeSalles = 15;
-
     private float procValueTreasure = 0.5f;         //valeur procedural pour la salle Treasure, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles de tresors
     private float procValueEmpty = 0.5f;            //valeur procedural pour la salle Empty, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles vides
 
@@ -859,7 +857,7 @@ public class Map : BaseObject
     // Use this for initialization
     protected override void MinimapGeneration()
     {
-        int n = nombreDeSalles-2;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
+        int n = ProceduralValues.numberOfRoom - 2;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
         int[] o = new int[n - 1];
 
         /*int[,] graph =
@@ -916,7 +914,8 @@ public class Map : BaseObject
         miniCam.orthographicSize = 15;
         miniCam.rect = new Rect(0.75f, 0.75f, 0.25f, 0.25f);
         miniCam.clearFlags = CameraClearFlags.SolidColor;
-        miniCam.backgroundColor = new Color(0.1f, 0.1f, 0.1f, 1);
+        miniCam.backgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.1f);
+        //miniCam.backgroundColor = new Color(1, 1, 1, 0.1f);
 
         Minimap.transform.position = offset - new Vector3(0, 0, 10);
         //renderLink(fullmap, o, offset, Minimap);

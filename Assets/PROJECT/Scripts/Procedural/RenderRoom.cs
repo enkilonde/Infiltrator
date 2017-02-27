@@ -138,14 +138,14 @@ public class RenderRoom : BaseObject {
 
         GameObject salle = Instantiate<GameObject>(Resources.Load<GameObject>("Salle"));
         GameObject plane = salle.GetComponentInChildren<MeshCollider>().gameObject;
-        salle.name = "Room " + roomIndex;
+        salle.name = "Room " + roomIndex + "(" + room.roomType.ToString() + ")";
         salle.transform.position = new Vector3(x * ProceduralValues.roomWidth, 0, y * ProceduralValues.roomWidth);
         plane.transform.localScale = new Vector3(ProceduralValues.roomWidth/10f, 1, ProceduralValues.roomWidth/10f);
         salle.GetComponent<RoomBehaviour>().roomClass = room;
         room.gameobject = salle;
         room.roomIndex = roomIndex;
 
-        ApplyRender(room, plane);
+        //ApplyRender(room, plane);
 
         salle.transform.SetParent(parent);
     }

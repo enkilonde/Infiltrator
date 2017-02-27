@@ -7,6 +7,8 @@ public class PlayerActions : BaseObject
     private Inventory inventory;
     private Image completionImage;
     private PlayerController controller;
+    private RawImage wideMinimap;
+    private Camera minimapCam;
 
     float ActionRange;
 
@@ -29,10 +31,18 @@ public class PlayerActions : BaseObject
         PersonalCanvas.GetComponent<FollowTarget>().targetToFollow = transform;
         completionImage = PersonalCanvas.transform.GetChild(0).GetComponent<Image>();
 
+
         smotherTime = PlayerProperties.smotherSpeed;
         unlockTime = PlayerProperties.unlockSpeed;
         ActionRange = PlayerProperties.actionRange;
 
+    }
+
+    protected override void OnLoadEnded()
+    {
+        base.OnLoadEnded();
+        wideMinimap = GameObject.Find("FullMiniMap").GetComponent<RawImage>();
+        minimapCam = GameObject.Find("Minimap").GetComponent<Camera>();
     }
 
     protected override void BaseUpdate()
@@ -46,6 +56,8 @@ public class PlayerActions : BaseObject
 
         if (Input.GetKeyDown(KeyCode.A)) inventory.ChangeSelectedItem(-1);
         if (Input.GetKeyDown(KeyCode.E)) inventory.ChangeSelectedItem(1);
+
+        if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyUp(KeyCode.Tab)) WidenMinimap();
 
     }
 
@@ -113,11 +125,6 @@ public class PlayerActions : BaseObject
     {
         Collider[] doorsAround = Physics.OverlapSphere(transform.position, ActionRange, 1 << LayerMask.NameToLayer("Doors"));
 
-        if (doorsAround.Length == 0)
-        {
-            ShowRange(ActionRange);
-            yield break;
-        }
         float minDist = ActionRange + 1;
 
         Transform nearestDoor = null;
@@ -125,11 +132,17 @@ public class PlayerActions : BaseObject
         for (int i = 0; i < doorsAround.Length; i++)
         {
             float dist = Vector3.Distance(transform.position, doorsAround[i].transform.position);
-            if (dist < minDist)
+            if (dist < minDist && doorsAround[i].GetComponent<DoorBehaviour>().state == DoorBehaviour.doorState.LOCKED)
             {
                 minDist = dist;
                 nearestDoor = doorsAround[i].transform;
             }
+        }
+
+        if(nearestDoor == null)
+        {
+            ShowRange(ActionRange);
+            yield break;
         }
 
         controller.canMove = false;
@@ -213,6 +226,29 @@ public class PlayerActions : BaseObject
         part.startSpeed = range / part.startLifetime;
         part.Play();
         Destroy(part.gameObject, part.startLifetime);
+    }
+
+    void WidenMinimap()
+    {
+        if (Input.GetKey(KeyCode.Tab))
+        {
+            wideMinimap.enabled = true;
+            RenderTexture rTex = new RenderTexture(1920, 1080, 16);
+            minimapCam.targetTexture = rTex;
+            wideMinimap.texture = rTex;
+            minimapCam.rect = new Rect(0, 0, 1, 1);
+        }
+        else
+        {
+            wideMinimap.enabled = false;
+            minimapCam.targetTexture = null;
+            minimapCam.rect = new Rect(0.75f, 0.75f, 0.25f, 0.25f);
+
+        }
+
+
+
+
     }
 
 }
