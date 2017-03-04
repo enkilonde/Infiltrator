@@ -344,7 +344,7 @@ public class Map : BaseObject
         return lvl;
 
     }
-
+/*
     /// <summary>
     /// Fonction qui relie les rooms graphiquement avec des traits
     /// </summary>
@@ -415,7 +415,7 @@ public class Map : BaseObject
             }
         }
     }
-
+    */
     /// <summary>
     /// Fonction qui affiche les rooms graphiquement
     /// </summary>
@@ -424,6 +424,7 @@ public class Map : BaseObject
     /// <param name="Parent"></param>
     public void renderMap(RT[] lvl, Vector3 offset = default(Vector3), GameObject Parent = null)
     {
+        tabRoom = new GameObject[lvl.Length];
         for (int i = 0; i < lvl.Length; i++)
         {
             tabRoom[i] = Instantiate(roomModele, new Vector3(0f, 0f, 0f), Quaternion.identity) as GameObject;
