@@ -5,8 +5,9 @@ public class ProceduralValues
 {
 
     public static float timeElapsed;
-
-    public static int numberOfRoom = 30;
+    //Map procedural values
+    public static int numberOfRoom = 100;
+    public static int partSize = 33;
 
     //Room procedural values
     //number of sprites in room

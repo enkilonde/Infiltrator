@@ -32,9 +32,19 @@ public class GameManager : BaseObject
         {
             player = Instantiate<GameObject>(Resources.Load<GameObject>("Player"));
         }
-        
-        player.transform.position = mapScript.rooms[ProceduralValues.numberOfRoom - 2].gameobject.transform.position + new Vector3(0, 1.0f, 0);
-        Camera.main.GetComponent<CameraBehaviour>().targetRoom = mapScript.rooms[ProceduralValues.numberOfRoom - 2].gameobject.transform;
+        if(ProceduralValues.numberOfRoom/ProceduralValues.partSize>=1)
+        {
+
+            player.transform.position = mapScript.rooms[ProceduralValues.partSize - 2].gameobject.transform.position + new Vector3(0, 1.0f, 0);
+            Camera.main.GetComponent<CameraBehaviour>().targetRoom = mapScript.rooms[ProceduralValues.partSize - 2].gameobject.transform;
+        }
+
+        else
+        {
+
+            player.transform.position = mapScript.rooms[ProceduralValues.numberOfRoom - 2].gameobject.transform.position + new Vector3(0, 1.0f, 0);
+            Camera.main.GetComponent<CameraBehaviour>().targetRoom = mapScript.rooms[ProceduralValues.numberOfRoom - 2].gameobject.transform;
+        }
     }
 
 

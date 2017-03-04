@@ -449,6 +449,7 @@ public class Map : BaseObject
     /// <returns></returns>
     public int[,] procMap(int n)
     {
+
         int[,] graph = new int[n, n];
         int y = Random.Range(1, n - 1);
         int x = Random.Range(1, n);
@@ -664,7 +665,7 @@ public class Map : BaseObject
     /// <returns></returns>
     public Room[] generateMap(RT[] lvl)
     {
-
+        
         int cptTresor=0;
         int cptEmpty = 0;
 
@@ -720,7 +721,7 @@ public class Map : BaseObject
             Vector2[] doors = temp[i].ToArray();
             int[] doorsTargets = tempTarget[i].ToArray();
             RoomType type = RoomType.NORMAL;
-            if (i == lvl.Length - 2)
+            if (i == ProceduralValues.partSize - 2)
             {
                 type = RoomType.EMPTY;
             }
@@ -854,58 +855,159 @@ public class Map : BaseObject
         return r;
     }
 
+    /// <summary>
+    /// Fonction qui rajoute une partie de map a la map principale
+    /// </summary>
+    /// <param name="fm"></param>
+    /// <param name="partMap"></param>
+    /// <param name="ind"></param>
+    /// <param name="pS"></param>
+    /// <returns></returns>
+    public RT[] add(RT[] fm, RT[] partMap, int ind, int pS)
+    {
+        RT[] tmp = new RT[fm.Length + partMap.Length];
+        if (ind == 0)
+        {
+            for (int i = 0; i < partMap.Length; i++)
+            {
+                RT r = new RT();
+                r.setX(partMap[i].getX());
+                r.setY(partMap[i].getY());
+                tmp[ind*pS + i] = r;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < fm.Length; i++)
+            {
+                RT r = new RT();
+                r.setX(fm[i].getX());
+                r.setY(fm[i].getY());
+                tmp[i] = r;
+            }
+            for (int i = 0; i < partMap.Length; i++)
+            {
+                RT r = new RT();
+                r.setX(fm[(ind-1) * pS + pS-1].getX() +Mathf.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()) + 2);
+                r.setY(fm[(ind - 1) * pS + pS-1].getY() + Mathf.Abs(partMap[i].getY() - partMap[partMap.Length - 2].getY()));
+                tmp[ind*pS + i] = r;
+            }
+        }
+
+        linkAll(ref tmp);
+        return tmp;
+    }
     // Use this for initialization
     protected override void MinimapGeneration()
     {
-        int n = ProceduralValues.numberOfRoom - 2;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
-        int[] o = new int[n - 1];
+        int nFull = ProceduralValues.numberOfRoom - 2;               // A ajouter la room de debut et de fin independemment, si on veut une map taille 20, n = 18, if taille 25, n= 25-2
+        
 
-        /*int[,] graph =
-        {                       { 0, 0, 0, 0, 5, 0,0,0,0,0},
-                                { 0, 0, 29, 87, 0, 87,0,0,0,0},
-                                { 0, 29, 0, 0, 0, 88,0,0,0,0},
-                                { 0, 87, 0, 0, 49,0,0,0,61,0},
-                                { 5, 0, 0,49, 0, 0,0,0,27,0},
-                                { 0, 87, 88, 0, 0, 0,0,79,0,0},
-                                { 0, 0, 0, 0, 0, 0,0,0,27,0},
-                                { 0, 0, 0, 0,0, 79, 0,0,49,7},
-                                { 0, 0, 0,61, 27, 0,27,49,0,10},
-                                { 0, 0, 0, 0,0, 0,0,7,10,0},
-        };
-        */
+        int ind = 0;
+        fullmap = new RT[0];
+        
 
-        int[,] graph = procMap(n);
-        n = (int)System.Math.Sqrt(graph.Length);
-
-        int[] resultat = prim(graph, n, ref o);
-        fullmap = map(resultat, n, o);
-
-        while (!checkMap(fullmap))
+        for (int i = 0; i < nFull / ProceduralValues.partSize; i++)
         {
-            o = new int[n - 1];
-            graph = procMap(n);
-            resultat = prim(graph, n, ref o);
-            fullmap = map(resultat, n, o);
-            // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
-            //Debug.Log("False");
+            ind++;
+            RT[] partMap = new RT[ProceduralValues.partSize -2];
+            int n = ProceduralValues.partSize -2;
 
+            int[] o = new int[n-1];
+
+            int[,] graph = procMap(n);
+            n = (int)System.Math.Sqrt(graph.Length);
+
+            int[] resultat = prim(graph, n, ref o);
+            partMap = map(resultat, n, o);
+
+            while (!checkMap(partMap))
+            {
+                o = new int[n - 1];
+                graph = procMap(n);
+                resultat = prim(graph, n, ref o);
+                partMap = map(resultat, n, o);
+                // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
+                //Debug.Log("False");
+
+            }
+
+            linkAll(ref partMap);
+
+            partMap = startEndMap(partMap);
+            //Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+            // Tableau de room a recuperer, les portes ont ete initialisees
+
+            // partMap done
+
+            fullmap=add(fullmap, partMap, i, ProceduralValues.partSize);
+
+            
+         }
+
+        if(nFull% ProceduralValues.partSize > 1)
+        {
+            RT[] partMap = new RT[nFull % ProceduralValues.partSize];
+            int n = nFull % ProceduralValues.partSize;
+
+            int[] o = new int[n - 1];
+
+            int[,] graph = procMap(n);
+            n = (int)System.Math.Sqrt(graph.Length);
+
+            int[] resultat = prim(graph, n, ref o);
+            partMap = map(resultat, n, o);
+
+            while (!checkMap(partMap))
+            {
+                o = new int[n - 1];
+                graph = procMap(n);
+                resultat = prim(graph, n, ref o);
+                partMap = map(resultat, n, o);
+                // fullmap est le tabeau de RT ( room avec position x et y et un tableau de connection)
+                //Debug.Log("False");
+
+            }
+
+            linkAll(ref partMap);
+
+            partMap = startEndMap(partMap);
+            //Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
+            // Tableau de room a recuperer, les portes ont ete initialisees
+
+            // partMap done
+
+            fullmap=add(fullmap, partMap, ind, ProceduralValues.partSize);
+        }
+        else
+        {
+            RT[] tmp = new RT[fullmap.Length + 1];
+            for (int i = 0; i < fullmap.Length; i++)
+            {
+                RT r1 = new RT();
+                r1.setX(fullmap[i].getX());
+                r1.setY(fullmap[i].getY());
+                tmp[i] = r1;
+            }
+            RT r = new RT();
+            r.setX(fullmap[fullmap.Length-1].getX()+2);
+            r.setY(fullmap[fullmap.Length - 1].getY());
+            
+            tmp[tmp.Length-1] = r;
+            fullmap = tmp;
+            linkAll(ref fullmap);
         }
 
-        linkAll(ref fullmap);
 
-        fullmap = startEndMap(fullmap);
-        //Room[] tabRoom= generateMap(fullmap.Length, fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
-        rooms = generateMap(fullmap);                   // Tableau de room a recuperer, les portes ont ete initialisees
-
-
-        RenderMinimap(o);
+        rooms = generateMap(fullmap);
+        RenderMinimap();
     }
 
     /// <summary>
     /// Fonction qui render la minimap
     /// </summary>
     /// <param name="o"></param>
-    void RenderMinimap(int[] o)
+    void RenderMinimap()
     {
         Vector3 offset = new Vector3(100, 100, 100);
         GameObject Minimap = new GameObject("Minimap");
