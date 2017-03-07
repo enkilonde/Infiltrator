@@ -757,7 +757,7 @@ public class Map : BaseObject
     /// </summary>
     /// <param name="lvl"></param>
     /// <returns></returns>
-    public bool checkMap(RT[] lvl)
+    public bool checkMap(ref RT[] lvl)
     {
         for (int i = 0; i < lvl.Length; i++)
         {
@@ -882,8 +882,8 @@ public class Map : BaseObject
             for (int i = 0; i < partMap.Length; i++)
             {
                 RT r = new RT();
-                r.setX(fm[(ind-1) * pS + pS-1].getX() +Mathf.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()) + 2);
-                r.setY(fm[(ind - 1) * pS + pS-1].getY() + Mathf.Abs(partMap[i].getY() - partMap[partMap.Length - 2].getY()));
+                r.setX(fm[(ind*pS-1)].getX() + System.Math.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()) + 2);
+                r.setY(fm[(ind * pS - 1)].getY() + (partMap[i].getY() - partMap[partMap.Length - 2].getY()));
                 tmp[ind*pS + i] = r;
             }
         }
@@ -915,7 +915,7 @@ public class Map : BaseObject
             int[] resultat = prim(graph, n, ref o);
             partMap = map(resultat, n, o);
 
-            while (!checkMap(partMap))
+            while (!checkMap(ref partMap))
             {
                 o = new int[n - 1];
                 graph = procMap(n);
@@ -952,7 +952,7 @@ public class Map : BaseObject
             int[] resultat = prim(graph, n, ref o);
             partMap = map(resultat, n, o);
 
-            while (!checkMap(partMap))
+            while (!checkMap(ref partMap))
             {
                 o = new int[n - 1];
                 graph = procMap(n);
