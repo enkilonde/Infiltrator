@@ -872,6 +872,9 @@ public class Map : BaseObject
         }
         else
         {
+            int rand=Random.Range(0, 3);
+
+
             for (int i = 0; i < fm.Length; i++)
             {
                 RT r = new RT();
@@ -882,8 +885,23 @@ public class Map : BaseObject
             for (int i = 0; i < partMap.Length; i++)
             {
                 RT r = new RT();
-                r.setX(fm[(ind*pS-1)].getX() + System.Math.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()) + 2);
-                r.setY(fm[(ind * pS - 1)].getY() + (partMap[i].getY() - partMap[partMap.Length - 2].getY()));
+
+                if (rand == 0)
+                {
+                    r.setX(fm[(ind * pS - 1)].getX() + System.Math.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()) + 2);
+                    r.setY(fm[(ind * pS - 1)].getY() + (partMap[i].getY() - partMap[partMap.Length - 2].getY()));
+                }
+                if (rand == 1)
+                {
+                    r.setX(fm[(ind * pS - 1)].getX() + System.Math.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()));
+                    r.setY(fm[(ind * pS - 1)].getY() + (partMap[i].getY() - partMap[partMap.Length - 2].getY()) + 2);
+                }
+                if (rand == 2)
+                {
+                    r.setX(fm[(ind * pS - 1)].getX() + System.Math.Abs(partMap[i].getX() - partMap[partMap.Length - 2].getX()));
+                    r.setY(fm[(ind * pS - 1)].getY() + (partMap[i].getY() - partMap[partMap.Length - 2].getY()) - 2);
+                }
+
                 tmp[ind*pS + i] = r;
             }
         }
