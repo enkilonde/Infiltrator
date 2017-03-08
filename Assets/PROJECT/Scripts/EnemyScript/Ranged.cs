@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Soldier : BaseEnemy
+public class Ranged : BaseEnemy
 {
     // Valeurs de l'ennemi influant sur les valeurs procédurales
     public State startState = State.AWAKE;

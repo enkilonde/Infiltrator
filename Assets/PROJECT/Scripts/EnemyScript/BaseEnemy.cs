@@ -32,6 +32,7 @@ public class BaseEnemy : BaseObject {
     private Vector3 searchArea; // position à atteindre pour la recherche
     bool searching = false;
 
+    private bool inSight = false;
     private bool pursuit;       // Permet de savoir si l'ennemi est en poursuite ou retourn vers le pattern
     private bool inPattern;     // 
     private float chaseTimer;
@@ -66,6 +67,9 @@ public class BaseEnemy : BaseObject {
     private float speed;
     //[SerializeField]
     private float atkRange;
+
+    protected float addVA = 0f;
+    protected float addVD = 0f;
 
     private float addedViewAngle = 0;
     private float addedViewDistance = 0;
@@ -212,7 +216,7 @@ public class BaseEnemy : BaseObject {
         
         if(curHealth <= 0 )
         {
-            ChangeState(State.DEAD);
+            InstaKill();
         }
         else
         {
@@ -235,8 +239,12 @@ public class BaseEnemy : BaseObject {
     {
         if (myState != State.DEAD)
         {
+            curHealth = 0;
             //TakeDamage(curHealth);
             ChangeState(State.DEAD);
+            inSight = false;
+            searching = false;
+            pursuit = false;
         }
     }
 
@@ -273,8 +281,8 @@ public class BaseEnemy : BaseObject {
             case 5:
             case 6:
                 canSee = true;
-                addedViewAngle = 20;
-                addedViewDistance = 1.5f;
+                addedViewAngle = addVA;
+                addedViewDistance = addVD;
                 ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance, canSee);
                 break;
                 
@@ -301,6 +309,7 @@ public class BaseEnemy : BaseObject {
                 if (Physics.Raycast(transform.position, player.transform.position - transform.position, Vector3.Distance(transform.position, player.transform.position)))
                 {// Raycast vers le Player pour savoir si il y a un obstacle entre qui obstrue la vision
                     // Player repéré
+                    inSight = true;
                     if(myState != State.ALERTED)    // Si pas déja alerté
                     {
                         ChangeState(State.ALERTED);
@@ -316,6 +325,10 @@ public class BaseEnemy : BaseObject {
                     }
 
                     chaseTimer = 0;     // Ennemi visible donc temps avant fin de poursuite remis à 0 
+                }
+                else
+                {
+                    inSight = false;
                 }
             }
         }
@@ -374,12 +387,22 @@ public class BaseEnemy : BaseObject {
         {
             if (pursuit) // Poursuite du player
             {
+                float dist = Vector3.Distance(transform.position, player.transform.position);
                 //transform.LookAt(player.transform.position);
-                MoveToPosition(player.transform.position);
-                if (Vector3.Distance(transform.position, player.transform.position) < atkRange) // player à portée d'attaque
+                if(dist > atkRange * 0.8f)
                 {
-                    pursuit = false;
-                    ChangeState(State.AWAKE);
+                    MoveToPosition(player.transform.position);
+                }
+                if (dist < atkRange) // player à portée d'attaque
+                {
+                    transform.LookAt(player.transform.position);
+                    //pursuit = false;
+                    //ChangeState(State.AWAKE);
+                    if (inSight)
+                    {
+                        // Attack Player
+                        Attack();
+                    }
                     //player.SetActive(false);
                 }
                 chaseTimer += Time.deltaTime;
@@ -408,6 +431,12 @@ public class BaseEnemy : BaseObject {
         rotBeforeAlert = transform.rotation;
         ChangeState(State.SEARCHING);
     }
+
+    protected virtual void Attack() {}
+
+    public virtual void EnemyActivated(int state) {}
+
+    public virtual void SetPattern(int pat, int rectX, int rectZ, int sizeX, int sizeY, int prog) {}
 
     private void PatternNone()
     {

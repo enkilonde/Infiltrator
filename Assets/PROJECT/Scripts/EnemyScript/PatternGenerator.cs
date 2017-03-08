@@ -249,16 +249,25 @@ public class PatternGenerator : BaseObject
             {
                 int px = (int)(origin.x - offsetX + (2 * offsetX - rect.x - rect.width + conf.offsetPos.x));
                 int pz = (int)(origin.z + offsetY + (- rect.y - rect.height + conf.offsetPos.y));
-                GameObject enemy = Instantiate(Resources.Load("Soldier", typeof(GameObject))) as GameObject;
-                /*
-                enemy.GetComponent<Soldier>().SetPattern(conf.pattern, 
-                    (int)(rect.x + conf.offsetPos.x) - offsetX,
-                    (int)(rect.y + conf.offsetPos.y) - offsetY,
-                    (int)conf.rectSize.x,
-                    (int)conf.rectSize.y,
-                    conf.progress);
-                 */
 
+                int enemyType = Random.Range(0, 2);
+                GameObject enemy = new GameObject();
+
+                switch (enemyType)
+                {
+                    case 0:
+                        enemy = Instantiate(Resources.Load("Soldier", typeof(GameObject))) as GameObject;
+                        break;
+                    case 1:
+                        enemy = Instantiate(Resources.Load("Ranged", typeof(GameObject))) as GameObject;
+                        break;
+                    default:
+                        enemy = Instantiate(Resources.Load("Soldier", typeof(GameObject))) as GameObject;
+                        break;
+
+                }
+
+                //GameObject enemy = Instantiate(Resources.Load("Soldier", typeof(GameObject))) as GameObject;
 
                 int rd = Random.Range(0, 100);
                 if (rd < ProceduralValues.asleepChances * 100)
@@ -270,14 +279,16 @@ public class PatternGenerator : BaseObject
                     rd = 3;
                 }
 
-                enemy.GetComponent<Soldier>().SetPattern(conf.pattern,
+
+
+                enemy.GetComponent<BaseEnemy>().SetPattern(conf.pattern,
                     px,
                     pz,
                     (int)conf.rectSize.x,
                     (int)conf.rectSize.y,
                     conf.progress);
                 
-                enemy.GetComponent<Soldier>().EnemyActivated(rd);
+                enemy.GetComponent<BaseEnemy>().EnemyActivated(rd);
                 enemy.transform.parent = papa;
                 TabEnemies.Add(enemy.GetComponent<BaseEnemy>());
             }
