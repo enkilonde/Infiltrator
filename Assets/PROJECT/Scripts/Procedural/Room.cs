@@ -191,7 +191,7 @@ public class Room{
                 listRect.Add(temp);
             }
         }
-        
+        placeButton();
     }
 
     /// <summary>
