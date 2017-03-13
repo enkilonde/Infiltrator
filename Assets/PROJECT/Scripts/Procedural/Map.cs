@@ -744,7 +744,7 @@ public class Map : BaseObject
             }
 
             //Debug.Log(i + " : " + doorsTargets.Length);
-
+            ProceduralValues.ApplyRandomSetup();
             map[i] = new Room(ref doors, ref doorsTargets, type);
         }
 

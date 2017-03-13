@@ -32,17 +32,23 @@ public class Room{
     }
     public Room(ref Vector2 [] doors, RoomType roomType = RoomType.EMPTY)
     {
-        if (roomType == RoomType.EMPTY || roomType == RoomType.TREASURE)
+        this.roomType = roomType;
+        if (roomType == RoomType.EMPTY || roomType == RoomType.TREASURE || roomType == RoomType.BOSS)
         {
             roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
             this.doors = new Vector2[doors.Length];
             this.doors = doors;
 
             CreateEmptyRoom();
-            if(roomType == RoomType.TREASURE)
+            if(roomType == RoomType.BOSS)
+            {
+                
+                CreateBossRoom();
+            }
+            else if(roomType == RoomType.TREASURE)
             {
                 Rect temp = new Rect(new Vector2(-1 + (ProceduralValues.roomWidth / 2), -1 + (ProceduralValues.roomHeight / 2)), new Vector2(2, 2));
-                listRect.Add(temp);
+                //listRect.Add(temp);
             }
         }
         else
@@ -68,7 +74,8 @@ public class Room{
     }
     public Room(ref Vector2[] doors, ref int[] doorsTarget, RoomType roomType = RoomType.EMPTY)
     {
-        if (roomType == RoomType.EMPTY || roomType == RoomType.TREASURE)
+        this.roomType = roomType;
+        if (roomType == RoomType.EMPTY || roomType == RoomType.TREASURE || roomType == RoomType.BOSS)
         {
             roomMatrix = new SpriteType[ProceduralValues.roomWidth, ProceduralValues.roomHeight];
             this.doors = new Vector2[doors.Length];
@@ -76,10 +83,14 @@ public class Room{
 
 
             CreateEmptyRoom();
-            if (roomType == RoomType.TREASURE)
+            if (roomType == RoomType.BOSS)
+            {
+                CreateBossRoom();
+            }
+            else if (roomType == RoomType.TREASURE)
             {
                 Rect temp = new Rect(new Vector2(-1 + (ProceduralValues.roomWidth / 2), -1 + (ProceduralValues.roomHeight / 2)), new Vector2(2, 2));
-                listRect.Add(temp);
+                //listRect.Add(temp);
             }
         }
         else
@@ -164,6 +175,23 @@ public class Room{
             }
             roomMatrix[x, y] = SpriteType.DOOR;
         }
+    }
+
+    /// <summary>
+    /// modify the current room to have a bosse room
+    /// </summary>
+    public void CreateBossRoom()
+    {
+        CreateEmptyRoom();
+        for(int i = 0; i < ProceduralValues.roomWidth; i+=8)
+        {
+            for(int j =0; j< ProceduralValues.roomHeight; j+=8)
+            {
+                Rect temp = new Rect(new Vector2(i,j), new Vector2(UnityEngine.Random.Range(2, 8), UnityEngine.Random.Range(2, 8)));
+                listRect.Add(temp);
+            }
+        }
+        
     }
 
     /// <summary>

@@ -6,8 +6,8 @@ public class ProceduralValues
 
     public static float timeElapsed;
     //Map procedural values
-    public static int numberOfRoom = 46;
-    public static int partSize = 23;
+    public static int numberOfRoom = 4;
+    public static int partSize = 4;
     //valeur procedural pour la salle Treasure, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles de tresors
     public static float luckValueTreasure = 0.5f;
     //valeur procedural pour la salle Empty, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles vides   
@@ -66,7 +66,10 @@ public class ProceduralValues
     {
         ApplySetup(Random.Range(0, 4) + 10 * Random.Range(0, 5) + 100 * Random.Range(0, 3));
     }
-
+    public static void ApplyRandomBossSetup()
+    {
+        ApplySetup(Random.Range(2, 4) + 10 * Random.Range(3, 5) + 100 * Random.Range(1, 3));
+    }
 
     /// <summary>
     /// 0->3 change roomNbIteration + 10 change nbMidPoint + 100 change randomDistance
