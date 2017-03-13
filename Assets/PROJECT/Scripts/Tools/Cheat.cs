@@ -15,6 +15,16 @@ public class Cheat : BaseObject
             item.GetComponent<ItemObject>().item = ItemsUtility.GetRandomEnum<ITEM_LIST>();
         }
 
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            DoorBehaviour[] doors = FindObjectsOfType<DoorBehaviour>();
+
+            for (int i = 0; i < doors.Length; i++)
+            {
+                doors[i].UpdateMinimap(doors[i], doors[i]);
+            }
+        }
+
 
     }
 

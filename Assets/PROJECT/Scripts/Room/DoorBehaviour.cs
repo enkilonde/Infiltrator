@@ -118,7 +118,7 @@ public class DoorBehaviour : RoomObject
         }
     }
 
-    void UpdateMinimap(DoorBehaviour oldRoom, DoorBehaviour nextRoom)
+    public void UpdateMinimap(DoorBehaviour oldRoom, DoorBehaviour nextRoom)
     {
 
         oldRoom.minimapRoomObject.GetComponent<Renderer>().material.color = Color.blue;
