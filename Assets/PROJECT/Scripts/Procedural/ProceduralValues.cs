@@ -45,6 +45,8 @@ public class ProceduralValues
     public static float enemyAtkRange = 1.0f;
     public static float asleepChances = 0.15f;
 
+    public static float radiusAlertPorpa = 5.0f;
+
     public static float chaseTime = 2.5f;
 
     //Merge procédural - gameplay

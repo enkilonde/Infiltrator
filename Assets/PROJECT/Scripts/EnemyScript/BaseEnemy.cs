@@ -278,8 +278,13 @@ public class BaseEnemy : BaseObject {
             
 
             case 4:
-            case 5:
+            case 5:    
             case 6:
+                if ((int)st == 5)
+                {
+                    AlertOthers(ProceduralValues.radiusAlertPorpa);
+                    Debug.Log("Alerte propagée");
+                }
                 canSee = true;
                 addedViewAngle = addVA;
                 addedViewDistance = addVD;
@@ -430,6 +435,28 @@ public class BaseEnemy : BaseObject {
         posBeforeAlert = transform.position;
         rotBeforeAlert = transform.rotation;
         ChangeState(State.SEARCHING);
+    }
+
+    public void AlertOthers(float range)
+    {
+        ShowAlerte(range);
+        Collider[] inRange = Physics.OverlapSphere(transform.position, range, 1 << LayerMask.NameToLayer("Ennemy"));
+        foreach(Collider c in inRange)
+        {
+            if(c.GetComponent<BaseEnemy>().myState != State.ALERTED)
+                c.GetComponent<BaseEnemy>().LaunchSearch(player.transform.position);
+        }
+    }
+
+    void ShowAlerte(float range)
+    {
+        ParticleSystem part;
+        GameObject partObj = Instantiate(Resources.Load<GameObject>("AlerteShow"), transform.position, Quaternion.identity) as GameObject;
+        partObj.transform.Rotate(-90, 0, 0);
+        part = partObj.GetComponent<ParticleSystem>();
+        part.startSpeed = range / part.startLifetime;
+        part.Play();
+        Destroy(part.gameObject, part.startLifetime);
     }
 
     protected virtual void Attack() {}
