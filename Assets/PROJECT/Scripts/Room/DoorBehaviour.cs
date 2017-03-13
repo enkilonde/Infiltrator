@@ -32,13 +32,16 @@ public class DoorBehaviour : RoomObject
         base.OnLoadEnded();
 
 
+        SetState(doorState.LOCKED);
+
+        if (TargetDoor == this) return;
+
         MinimapContainer = GameObject.Find("Minimap");
         roomIndex = transform.parent.parent.GetComponent<RoomBehaviour>().roomClass.roomIndex;
         minimapRoomObject = MinimapContainer.transform.GetChild(roomIndex).gameObject;
         ownRoom = transform.parent.parent.GetComponent<RoomBehaviour>();
         miniMBehaviour = FindObjectOfType<MinimapBehaviour>();
 
-        SetState(doorState.LOCKED);
         minimapRoomObject.SetActive(false);
 
 
@@ -48,7 +51,7 @@ public class DoorBehaviour : RoomObject
     protected override void OnLoadEndedLate()
     {
         base.OnLoadEndedLate();
-        if (roomIndex == ProceduralValues.numberOfRoom - 2)
+        if (roomIndex == ProceduralValues.partSize - 2)
         {
             minimapRoomObject.SetActive(true);
             UpdateMinimap(this, this);
@@ -102,6 +105,12 @@ public class DoorBehaviour : RoomObject
         if (coll.tag != "Player") return;
         if (locked) return;
 
+        if(TargetDoor == this)
+        {
+            ResetScene.ActivateReset();
+            return;
+        }
+
         coll.transform.position = TargetDoor.transform.position + TargetDoor.transform.forward * 1.1f + new Vector3(0, 1, 0);
         coll.GetComponent<PlayerController>().currentRoom = TargetDoor.roomIndex;
         UpdateMinimap(this, TargetDoor);
@@ -120,6 +129,7 @@ public class DoorBehaviour : RoomObject
 
     public void UpdateMinimap(DoorBehaviour oldRoom, DoorBehaviour nextRoom)
     {
+        if (TargetDoor == this) return;
 
         oldRoom.minimapRoomObject.GetComponent<Renderer>().material.color = Color.blue;
         //nextRoom.SetActive(true);

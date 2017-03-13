@@ -42,7 +42,7 @@ public class PlayerActions : BaseObject
     {
         base.OnLoadEnded();
         wideMinimap = GameObject.Find("FullMiniMap").GetComponent<RawImage>();
-        minimapCam = GameObject.Find("Minimap").GetComponent<Camera>();
+        minimapCam = GameObject.Find("Minimap").GetComponentInChildren<Camera>();
     }
 
     protected override void BaseUpdate()

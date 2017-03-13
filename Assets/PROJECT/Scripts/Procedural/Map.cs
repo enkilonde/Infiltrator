@@ -1023,17 +1023,30 @@ public class Map : BaseObject
     {
         Vector3 offset = new Vector3(100, 100, 100);
         GameObject Minimap = new GameObject("Minimap");
-        Camera miniCam = Minimap.AddComponent<Camera>();
+
+        StartCoroutine(waitToAddMinimapCam(Minimap));
+
+        Minimap.transform.position = offset - new Vector3(0, 0, 10);
+        //renderLink(fullmap, o, offset, Minimap);
+        renderMap(fullmap, offset, Minimap);
+    }
+
+    IEnumerator waitToAddMinimapCam(GameObject minimapGO)
+    {
+        yield return null;
+        yield return null;
+        yield return null;
+
+        GameObject miniCamGO = new GameObject("MinimapCam");
+        miniCamGO.AddComponent<MinimapCamera>();
+        miniCamGO.transform.SetParent(minimapGO.transform);
+        Camera miniCam = miniCamGO.AddComponent<Camera>();
         miniCam.orthographic = true;
         miniCam.orthographicSize = 15;
         miniCam.rect = new Rect(0.75f, 0.75f, 0.25f, 0.25f);
         miniCam.clearFlags = CameraClearFlags.SolidColor;
         miniCam.backgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.1f);
         //miniCam.backgroundColor = new Color(1, 1, 1, 0.1f);
-
-        Minimap.transform.position = offset - new Vector3(0, 0, 10);
-        //renderLink(fullmap, o, offset, Minimap);
-        renderMap(fullmap, offset, Minimap);
     }
 
     protected override void RoomGeneration()

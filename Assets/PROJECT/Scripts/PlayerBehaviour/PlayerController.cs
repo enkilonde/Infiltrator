@@ -17,6 +17,12 @@ public class PlayerController : BaseObject
 
     public static bool Activated;
 
+    protected override void SecondAwake()
+    {
+        base.SecondAwake();
+        currentRoom = ProceduralValues.partSize - 2;
+    }
+
     void OnEnable()
     {
         if (!Activated)

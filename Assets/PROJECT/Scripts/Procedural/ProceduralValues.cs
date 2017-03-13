@@ -6,12 +6,12 @@ public class ProceduralValues
 
     public static float timeElapsed;
     //Map procedural values
-    public static int numberOfRoom = 4;
-    public static int partSize = 4;
+    public static int numberOfRoom = 100;
+    public static int partSize = 20;
     //valeur procedural pour la salle Treasure, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles de tresors
-    public static float luckValueTreasure = 0.5f;
+    public static float luckValueTreasure = 0.75f;
     //valeur procedural pour la salle Empty, valeur entre 0 et 1, plus elle est grande, plus on a de chance d'avoir des salles vides   
-    public static float luckValueEmpty = 0.5f;
+    public static float luckValueEmpty = 0.0f;
     //Valeur max du nombre de salle de tresor
     public static int limitTreasure = 5;
     //Valeur max du nombre de salle vide    

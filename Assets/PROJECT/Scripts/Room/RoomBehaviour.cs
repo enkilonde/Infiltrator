@@ -35,7 +35,7 @@ public class RoomBehaviour : RoomObject
 
     void InitRoom(bool initDoors = true, bool initButtons = true, bool initEnemys = true)
     {
-        if (initDoors) doors = GetComponentsInChildren<DoorBehaviour>();
+        if (initDoors) doors = transform.Find("LD").GetComponentsInChildren<DoorBehaviour>();
         if (initButtons) buttonsUnlock = GetComponentsInChildren<ButtonUnlockDoors>();
         if (initEnemys) Ennemys = GetComponentsInChildren<BaseEnemy>();
     }

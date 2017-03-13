@@ -145,6 +145,21 @@ public class RenderRoom : BaseObject {
         room.gameobject = salle;
         room.roomIndex = roomIndex;
 
+        if(room.roomType == RoomType.BOSS)
+        {
+            salle.transform.Find("ButtonEndLevel").gameObject.SetActive(true);
+            salle.transform.Find("ButtonEndLevel").position = salle.transform.position - new Vector3(room.getButton().x, 0, room.getButton().y) + new Vector3(ProceduralValues.roomWidth/2, 0,ProceduralValues.roomHeight/2);
+        }
+
+        if (room.roomType == RoomType.TREASURE)
+        {
+            GameObject item = Instantiate<GameObject>(Resources.Load<GameObject>("Items/GenericItem"));
+            item.transform.position = salle.transform.position - new Vector3(room.getButton().x, 0, room.getButton().y) + new Vector3(ProceduralValues.roomWidth / 2, 0.1f, ProceduralValues.roomHeight / 2);
+            item.GetComponent<ItemObject>().item = ItemsUtility.GetRandomEnum<ITEM_LIST>();
+            item.transform.rotation = Quaternion.Euler(0, 0, 0);
+            item.transform.SetParent(salle.transform);
+        }
+
         //ApplyRender(room, plane);
 
         salle.transform.SetParent(parent);

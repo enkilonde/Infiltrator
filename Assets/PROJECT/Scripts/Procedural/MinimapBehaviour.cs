@@ -14,7 +14,7 @@ public class MinimapBehaviour : BaseObject
     protected override void OnLoadEnded()
     {
         base.OnLoadEnded();
-
+        return;
         minimapContainer = GameObject.Find("Minimap").transform;
         roomContainer = GameObject.Find("All Rooms").transform;
 

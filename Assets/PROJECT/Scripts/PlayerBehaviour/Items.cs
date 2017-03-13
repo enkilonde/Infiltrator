@@ -4,7 +4,7 @@ using System;
 
 public enum ITEM_LIST // Ajoutez le nom d'un item dans cet enum quand vous le créez
 {
-    DebugItem,
+    //DebugItem,
 
     //Passive Items
     MushroomBoost,
