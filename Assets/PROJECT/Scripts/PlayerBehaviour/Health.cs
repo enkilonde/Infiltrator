@@ -60,7 +60,7 @@ public class Health : BaseObject
     {
         Debug.Log("GAME OVER");
 
-        BaseObject.BeforeChangeScene(false);
+        BaseObject.BeforeChangeScene(true);
 
         SceneManager.LoadScene(0);
         //Time.timeScale = 0; //TO DO

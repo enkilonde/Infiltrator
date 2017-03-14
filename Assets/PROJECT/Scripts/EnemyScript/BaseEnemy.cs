@@ -77,6 +77,10 @@ public class BaseEnemy : BaseObject {
     private RectTransform transformView;
     private Image imageView;
 
+
+    //AJOUT DE ENKI - LIGHTS 2D
+    Light2D light2D;
+
     //Lors de l'instantiation de l'ennemi on appel cette fonction pour définir ses stats de base
     public virtual void Instantiated(State st, float maxH, float curH, float viewA, float viewD, float spd, float atkR)
     {
@@ -119,6 +123,8 @@ public class BaseEnemy : BaseObject {
             Debug.Log("Image de la vision introuvable (situé dans le Canvas 'ViewCanvas' en enfant de l'ennemi)");
         }
 
+        light2D = GetComponentInChildren<Light2D>();
+
         colorState = new Color[7];
         colorState[0] = new Color(0, 0, 0); // Black for DEAD
         colorState[1] = new Color(0, 0, 1); // Blue for ASLEEP
@@ -145,6 +151,7 @@ public class BaseEnemy : BaseObject {
                 transformView.gameObject.SetActive(true);
                 transformView.eulerAngles = new Vector3(90, 0, -transform.eulerAngles.y + viewA * 0.5f);
                 transformView.sizeDelta = new Vector2(viewD * 2.05f, viewD * 2.05f);
+                light2D.LightRadius = viewD;
             }
         }
         else
@@ -154,6 +161,7 @@ public class BaseEnemy : BaseObject {
         if (imageView != null)
         {
             imageView.fillAmount = viewA / 360f;
+            light2D.LightConeAngle = viewA;
         }
         else
         {
