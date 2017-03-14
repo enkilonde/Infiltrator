@@ -15,4 +15,10 @@ public class EventHandler : Singleton<EventHandler>
     {
 	
 	}
+
+    private void OnDestroy()
+    {
+        _instance = null;
+    }
+
 }

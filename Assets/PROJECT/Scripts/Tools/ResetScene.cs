@@ -33,14 +33,8 @@ public class ResetScene : BaseObject
 
     public static void ActivateReset(bool hardReset = false)
     {
-        BaseObject[] allBO = FindObjectsOfType<BaseObject>();
 
-        for (int i = 0; i < allBO.Length; i++)
-        {
-            allBO[i].EndLevel(hardReset);
-        }
-        PlayerProperties.resetplayer = hardReset;
-        PlayerProperties.Reset();
+        BaseObject.BeforeChangeScene(hardReset);
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

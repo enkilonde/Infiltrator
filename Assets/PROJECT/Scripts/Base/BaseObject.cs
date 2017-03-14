@@ -109,4 +109,17 @@ public class BaseObject : MonoBehaviour
 
     }
 
+
+    public static void BeforeChangeScene(bool keepPlayer)
+    {
+        BaseObject[] allBO = FindObjectsOfType<BaseObject>();
+
+        for (int i = 0; i < allBO.Length; i++)
+        {
+            allBO[i].EndLevel(keepPlayer);
+        }
+        PlayerProperties.resetplayer = keepPlayer;
+        PlayerProperties.Reset();
+    }
+
 }

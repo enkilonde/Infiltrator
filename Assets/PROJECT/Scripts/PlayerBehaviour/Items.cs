@@ -10,7 +10,8 @@ public enum ITEM_LIST // Ajoutez le nom d'un item dans cet enum quand vous le cr
     MushroomBoost,
 
     //Active items
-    Dash
+    Dash,
+    Crossbow
 }; 
 
 
@@ -131,6 +132,7 @@ class Dash : Item
     {
         base.Initialise();
         name = "Dash";
+        reloadTime = 2;
         activeItem = true;
     }
 
@@ -139,6 +141,24 @@ class Dash : Item
         base.UseItem();
         PlayerTransform.GetComponent<Rigidbody>().AddForce(PlayerTransform.forward * 100, ForceMode.VelocityChange);
     }
+}
+
+class Crossbow : Item
+{
+    public override void Initialise()
+    {
+        base.Initialise();
+        reloadTime = 10;
+        name = "Crossbow";
+        activeItem = true;
+    }
+
+    public override void UseItem(Transform PlayerTransform)
+    {
+        base.UseItem();
+        BulletBehaviour.Shoot(20, 100, PlayerTransform);
+    }
+
 }
 
 
