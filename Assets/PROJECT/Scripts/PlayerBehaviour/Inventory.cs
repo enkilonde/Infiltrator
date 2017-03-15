@@ -64,6 +64,7 @@ public class Inventory : BaseObject
     void UpdateReloadDisplay()
     {
         if (selectedItem >= itemsInInventory.Count) return;
+        if (reloadIndicator == null) return;
         Item currentItem = itemsInInventory[selectedItem];
         reloadIndicator.fillAmount = Mathf.InverseLerp(0, currentItem.reloadTime, currentItem.reloadRemaining);
 

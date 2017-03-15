@@ -29,7 +29,7 @@ public class Health : BaseObject
         currentHealthPoints -= value;
         Mathf.Clamp(currentHealthPoints, 0, maxHealth);
         StartCoroutine(ChangeColorOnDamages());
-        if(currentHealthPoints == 0)
+        if(currentHealthPoints <= 0)
         {
             if(tag == "Player")
             {

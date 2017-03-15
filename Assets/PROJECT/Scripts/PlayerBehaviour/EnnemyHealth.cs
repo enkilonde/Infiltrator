@@ -17,6 +17,7 @@ public class EnnemyHealth : Health
     {
         base.TakeDamages(value);
 
+        if(behaviour.myState != BaseEnemy.State.ALERTED)
         behaviour.LaunchSearch(behaviour.player.transform.position);
 
     }
