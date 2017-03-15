@@ -322,26 +322,30 @@ public class BaseEnemy : BaseObject {
         {
             //Debug.Log(Vector3.Angle(transform.forward, (player.transform.position - transform.position)));
             if (Vector3.Angle(transform.forward, (player.transform.position - transform.position)) < (viewAngle + addedViewAngle) * 0.5f)
-            { 
-                if (Physics.Raycast(transform.position, player.transform.position - transform.position, Vector3.Distance(transform.position, player.transform.position)))
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, Vector3.Distance(transform.position, player.transform.position)))
                 {// Raycast vers le Player pour savoir si il y a un obstacle entre qui obstrue la vision
-                    // Player repéré
-                    inSight = true;
-                    if(myState != State.ALERTED)    // Si pas déja alerté
+                    if(hit.collider.tag == "Player")
                     {
-                        ChangeState(State.ALERTED);
-                        pursuit = true;     // engage la poursuite du player
-                        if (inPattern)
+                        // Player repéré
+                        inSight = true;
+                        if (myState != State.ALERTED)    // Si pas déja alerté
                         {
-                            posBeforeAlert = transform.position; // Définit la position à laquelle retourner après l'alerte
-                            rotBeforeAlert = transform.rotation;
+                            ChangeState(State.ALERTED);
+                            pursuit = true;     // engage la poursuite du player
+                            if (inPattern)
+                            {
+                                posBeforeAlert = transform.position; // Définit la position à laquelle retourner après l'alerte
+                                rotBeforeAlert = transform.rotation;
+                            }
+                            inPattern = false;
+                            //Debug.Log("Player Repéré, alerte lancée");
+                            // Alerte tous les ennemis
                         }
-                        inPattern = false;
-                        //Debug.Log("Player Repéré, alerte lancée");
-                        // Alerte tous les ennemis
-                    }
 
-                    chaseTimer = 0;     // Ennemi visible donc temps avant fin de poursuite remis à 0 
+                        chaseTimer = 0;     // Ennemi visible donc temps avant fin de poursuite remis à 0 
+                    } 
                 }
                 else
                 {
