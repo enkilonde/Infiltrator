@@ -80,6 +80,7 @@ public class Inventory : BaseObject
 
     public void ChangeSelectedItem(int value, bool relative = true)
     {
+        if (itemsInInventory.Count <= 0) return;
         if (relative)
         {
             selectedItem = (int)Mathf.Repeat(selectedItem + value, itemsInInventory.Count);

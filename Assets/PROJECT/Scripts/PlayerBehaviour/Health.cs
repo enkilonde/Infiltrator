@@ -58,7 +58,7 @@ public class Health : BaseObject
 
     public void GameOver()
     {
-        Debug.Log("GAME OVER");
+        //Debug.Log("GAME OVER");
 
         BaseObject.BeforeChangeScene(true);
 

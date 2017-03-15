@@ -251,7 +251,7 @@ public class PatternGenerator : BaseObject
                 int pz = (int)(origin.z + offsetY + (- rect.y - rect.height + conf.offsetPos.y));
 
                 int enemyType = Random.Range(0, 2);
-                GameObject enemy = new GameObject("Enemy");
+                GameObject enemy /*= new GameObject("Enemy")*/;
 
                 switch (enemyType)
                 {

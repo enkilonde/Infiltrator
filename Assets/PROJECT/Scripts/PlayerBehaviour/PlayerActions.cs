@@ -52,7 +52,7 @@ public class PlayerActions : BaseObject
         if (Input.GetKeyDown(KeyCode.LeftAlt)) StartCoroutine(SmotherEnnemy(2, KeyCode.LeftAlt));
         if (Input.GetKeyDown(KeyCode.LeftControl)) StartCoroutine(UnlockDoor(2, KeyCode.LeftControl));
 
-        if (Input.GetKeyDown(KeyCode.Space)) ActivateItem();
+        if (Input.GetKey(KeyCode.Space)) ActivateItem();
 
         if (Input.GetKeyDown(KeyCode.A)) inventory.ChangeSelectedItem(-1);
         if (Input.GetKeyDown(KeyCode.E)) inventory.ChangeSelectedItem(1);

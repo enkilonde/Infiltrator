@@ -18,7 +18,7 @@ public class PlayerHealth : Health
     public override void TakeDamages(int value)
     {
         base.TakeDamages(value);
-
+        currentHealthPoints = Mathf.Clamp(currentHealthPoints, 0, maxHealth);
         healthBar.rectTransform.sizeDelta = new Vector2(currentHealthPoints, healthBar.rectTransform.sizeDelta.y);
     }
 

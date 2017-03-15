@@ -4,6 +4,7 @@ using System.Collections;
 public class Cheat : BaseObject
 {
 
+
     protected override void BaseUpdate()
     {
         base.BaseUpdate();
@@ -47,12 +48,31 @@ public class Cheat : BaseObject
 
         if (Input.GetKeyDown(KeyCode.F5))
         {
-
+            FindObjectOfType<PlayerHealth>().TakeDamages(-1000);
         }
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
+            PlayerProperties.playerWalkSpeed += 1;
+        }
 
+        if (Input.GetKeyDown(KeyCode.F7))
+        {
+            PlayerProperties.resetplayer = true;
+            PlayerProperties.Reset();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F8))
+        {
+
+            BaseEnemy[] roomEnnemis = GameObject.Find("All Rooms").transform.GetChild(FindObjectOfType<PlayerController>().currentRoom).GetComponent<RoomBehaviour>().Ennemys;
+            for (int i = 0; i < roomEnnemis.Length; i++)
+            {
+                if(roomEnnemis[i] != null)
+                {
+                    roomEnnemis[i].ChangeState(BaseEnemy.State.AWAKE);
+                }
+            }
         }
 
     }

@@ -11,7 +11,9 @@ public enum ITEM_LIST // Ajoutez le nom d'un item dans cet enum quand vous le cr
 
     //Active items
     Dash,
-    Crossbow
+    Crossbow,
+    Gun,
+    Minigun
 }; 
 
 
@@ -161,5 +163,42 @@ class Crossbow : Item
 
 }
 
+
+
+class Gun : Item
+{
+    public override void Initialise()
+    {
+        base.Initialise();
+        reloadTime = 0.5f;
+        name = "Gun";
+        activeItem = true;
+    }
+
+    public override void UseItem(Transform PlayerTransform)
+    {
+        base.UseItem();
+        BulletBehaviour.Shoot(20, 25, PlayerTransform);
+    }
+
+}
+
+class Minigun : Item
+{
+    public override void Initialise()
+    {
+        base.Initialise();
+        reloadTime = 0.05f;
+        name = "Minigun";
+        activeItem = true;
+    }
+
+    public override void UseItem(Transform PlayerTransform)
+    {
+        base.UseItem();
+        BulletBehaviour.Shoot(10, 5, PlayerTransform);
+    }
+
+}
 
 #endregion

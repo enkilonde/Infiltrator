@@ -294,7 +294,7 @@ public class BaseEnemy : BaseObject {
                 if ((int)st == 5)
                 {
                     AlertOthers(ProceduralValues.radiusAlertPorpa);
-                    Debug.Log("Alerte propagée");
+                    //Debug.Log("Alerte propagée");
                 }
                 canSee = true;
                 addedViewAngle = addVA;
@@ -337,7 +337,7 @@ public class BaseEnemy : BaseObject {
                             rotBeforeAlert = transform.rotation;
                         }
                         inPattern = false;
-                        Debug.Log("Player Repéré, alerte lancée");
+                        //Debug.Log("Player Repéré, alerte lancée");
                         // Alerte tous les ennemis
                     }
 
