@@ -125,6 +125,10 @@ public class DoorBehaviour : RoomObject
                 TargetDoor.roomBehaviourScript.doors[i].TargetDoor.roomBehaviourScript.state = RoomBehaviour.RoomState.KNOWN;
             }
         }
+
+        TargetDoor.roomBehaviourScript.ToggleEnnemysLights(true);
+        roomBehaviourScript.ToggleEnnemysLights(false);
+
     }
 
     public void UpdateMinimap(DoorBehaviour oldRoom, DoorBehaviour nextRoom)

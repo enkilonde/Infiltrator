@@ -79,7 +79,8 @@ public class BaseEnemy : BaseObject {
 
 
     //AJOUT DE ENKI - LIGHTS 2D
-    Light2D light2D;
+    [HideInInspector] public Light2D light2D;
+    float alertTimer = 0;
 
     //Lors de l'instantiation de l'ennemi on appel cette fonction pour définir ses stats de base
     public virtual void Instantiated(State st, float maxH, float curH, float viewA, float viewD, float spd, float atkR)
@@ -273,21 +274,23 @@ public class BaseEnemy : BaseObject {
 
     public virtual void ChangeState(State st)
     {
+        alertTimer = 0;
         myState = st;
         switch((int)st)
         {
-            case 0:
-            case 1:
+            case 0: //Dead
+            case 1: // Asleep
                 canSee = false;
                 addedViewAngle = 0;
                 addedViewDistance = 0;
                 ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance, canSee);
+                //GetComponent<Collider>().isTrigger = true;
                 break;
             
 
-            case 4:
-            case 5:    
-            case 6:
+            case 4: // Locked
+            case 5: // Awake
+            case 6://Strangled
                 if ((int)st == 5)
                 {
                     AlertOthers(ProceduralValues.radiusAlertPorpa);
@@ -297,6 +300,7 @@ public class BaseEnemy : BaseObject {
                 addedViewAngle = addVA;
                 addedViewDistance = addVD;
                 ChangeView(viewAngle + addedViewAngle, viewDistance + addedViewDistance, canSee);
+                //GetComponent<Collider>().isTrigger = false;
                 break;
                 
             default:
@@ -356,7 +360,7 @@ public class BaseEnemy : BaseObject {
     protected override void BaseUpdate()
     {
         base.BaseUpdate();
-
+        if (player == null) return;
         if(myState == State.AWAKE || myState == State.LOCKED)
         {
             if(!inPattern) // Retour à son pattern
@@ -424,6 +428,7 @@ public class BaseEnemy : BaseObject {
                     searchArea = player.transform.position;
                     ChangeState(State.SEARCHING);
                 }
+                AlertOthersPeriodicaly();
             }
             Vision(); 
         }
@@ -557,4 +562,16 @@ public class BaseEnemy : BaseObject {
         //Debug.Log("Watching");
     }
 
+    private void AlertOthersPeriodicaly()
+    {
+
+        alertTimer += Time.deltaTime;
+
+        if(alertTimer >= ProceduralValues.alertInterval)
+        {
+            alertTimer = 0;
+            AlertOthers(ProceduralValues.radiusAlertPorpa);
+        }
+
+    }
 }

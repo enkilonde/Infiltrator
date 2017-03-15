@@ -38,6 +38,7 @@ public class RoomBehaviour : RoomObject
         if (initDoors) doors = transform.Find("LD").GetComponentsInChildren<DoorBehaviour>();
         if (initButtons) buttonsUnlock = GetComponentsInChildren<ButtonUnlockDoors>();
         if (initEnemys) Ennemys = GetComponentsInChildren<BaseEnemy>();
+        ToggleEnnemysLights(false);
     }
 
     public void UnlockDoors()
@@ -47,4 +48,14 @@ public class RoomBehaviour : RoomObject
             doors[i].SetState(DoorBehaviour.doorState.OPEN);
         }
     }
+
+    public void ToggleEnnemysLights(bool state)
+    {
+        for (int i = 0; i < Ennemys.Length; i++)
+        {
+            if(Ennemys[i] != null)
+            Ennemys[i].light2D.enabled = state;
+        }
+    }
+
 }

@@ -43,7 +43,8 @@ public class Ranged : BaseEnemy
         if(timerAttack <= 0)
         {
             timerAttack = attackDelay;
-            player.GetComponent<PlayerHealth>().TakeDamages(10);
+            //player.GetComponent<PlayerHealth>().TakeDamages(10);
+            BulletBehaviour.Shoot(50, 10, transform);
             // Damage the player
         }
     }

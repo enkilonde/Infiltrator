@@ -13,7 +13,7 @@ public class PlayerProperties
     public static void Reset()
     {
         if (!resetplayer) return;
-        playerWalkSpeed = 10;
+        playerWalkSpeed = 5;
         smotherSpeed = 2;
         unlockSpeed = 2;
         actionRange = 3;
