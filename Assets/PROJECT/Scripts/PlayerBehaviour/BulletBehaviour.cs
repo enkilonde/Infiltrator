@@ -38,7 +38,7 @@ public class BulletBehaviour : MonoBehaviour
     {
         GameObject bullet = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         bullet.transform.localScale = new Vector3(1, 1, 1) * 0.5f;
-        
+        //bullet.layer = LayerMask.NameToLayer("Bullet");
         bullet.GetComponent<Collider>().isTrigger = true;
         Rigidbody rig = bullet.AddComponent<Rigidbody>();
         rig.isKinematic = true;
